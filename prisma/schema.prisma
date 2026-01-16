@@ -50,6 +50,7 @@ model Tag {
   name     String       @unique
   color    String?
   projects ProjectTag[]
+  createdAt DateTime @default(now())
 }
 
 model ProjectTag {

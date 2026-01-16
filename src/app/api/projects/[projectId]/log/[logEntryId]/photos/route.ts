@@ -1,0 +1,19 @@
+import { getLogEntryPhotos } from "../_lib/getLogEntryPhotos";
+import { addLogEntryPhoto } from "../_lib/addLogEntryPhoto";
+
+export async function GET(
+  _req: Request,
+  ctx: { params: Promise<{ projectId: string; logEntryId: string }> }
+) {
+  const { projectId, logEntryId } = await ctx.params;
+  return getLogEntryPhotos(projectId, logEntryId);
+}
+
+export async function POST(
+  req: Request,
+  ctx: { params: Promise<{ projectId: string; logEntryId: string }> }
+) {
+  const { projectId, logEntryId } = await ctx.params;
+  const body = await req.json().catch(() => null);
+  return addLogEntryPhoto(projectId, logEntryId, body);
+}

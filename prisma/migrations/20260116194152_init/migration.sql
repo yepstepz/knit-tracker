@@ -39,6 +39,7 @@ CREATE TABLE "Tag" (
     "id" UUID NOT NULL,
     "name" TEXT NOT NULL,
     "color" TEXT,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT "Tag_pkey" PRIMARY KEY ("id")
 );

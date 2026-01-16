@@ -12,7 +12,6 @@ export type PhotoParsedInput = {
 };
 
 export function isPhotoRole(v: string): v is PhotoRole {
-  // ⚠️ Подстрой под свой enum, если отличается
   return v === "COVER" || v === "GALLERY" || v === "LOG";
 }
 
@@ -46,7 +45,6 @@ export async function parseCreatePhotoInput(
   const caption = optionalStringOrNull(b.caption); // null если не строка/не задано
   const altRaw = b.alt;
 
-  // ✅ alt по умолчанию = caption, если alt не передали
   const alt =
     altRaw === null
       ? null

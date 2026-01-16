@@ -11,3 +11,12 @@ GET http://localhost:3000/api/projects?tagId={{tagId}}
 GET http://localhost:3000/api/projects?tagId={{tagId}}&archived=1
 
 ### ====== POST ======
+
+### Create project
+POST http://localhost:3000/api/projects
+Content-Type: application/json
+
+{
+  "title": "Свитер",
+  "descriptionMd": "## План\n- реглан"
+}
