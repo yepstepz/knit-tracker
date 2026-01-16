@@ -1,0 +1,71 @@
+### Get project by id (подставь id)
+GET http://localhost:3000/api/projects/{{projectId}}
+
+### ====== POST ======
+
+### Create project
+POST http://localhost:3000/api/projects
+Content-Type: application/json
+
+{
+  "title": "Свитер",
+  "descriptionMd": "## План\n- реглан"
+}
+
+### Archive project
+POST http://localhost:3000/api/projects/{{projectId}}/archive
+
+### Unarchive Project
+POST http://localhost:3000/api/projects/{{projectId}}/unarchive
+
+### ====== PATCH ======
+
+PATCH http://localhost:3000/api/projects/{{projectIdForPatch}}
+Content-Type: application/json
+
+{
+  "title": "Свитер (v3)",
+  "status": "ACTIVE"
+}
+
+###
+
+PATCH http://localhost:3000/api/projects/{{projectIdForPatch}}
+Content-Type: application/json
+
+{
+  "status": "FINISHED"
+}
+
+### PATCH project: description only
+PATCH {{baseUrl}}/api/projects/{{projectIdForPatch}}
+Content-Type: application/json
+
+{
+  "descriptionMd": "## План\n- реглан\n- рукава\n"
+}
+
+### PATCH project: yarn plan only
+PATCH {{baseUrl}}/api/projects/{{projectIdForPatch}}
+Content-Type: application/json
+
+{
+  "yarnPlan": "Drops Alpaca, 6 мотков"
+}
+
+### PATCH project: set dates (ISO)
+PATCH {{baseUrl}}/api/projects/{{projectId}}
+Content-Type: application/json
+
+{
+  "startedAt": "2026-01-15T10:00:00.000Z",
+  "finishedAt": null
+}
+
+### PATCH project: link to original (basedOnProjectId) - если поле есть в схеме
+PATCH {{baseUrl}}/api/projects/{{projectIdForPatch}}
+Content-Type: application/json
+
+ {
+   "basedOnProjectId": "{{projectId}}"
+ }

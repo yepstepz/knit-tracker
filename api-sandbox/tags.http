@@ -1,0 +1,28 @@
+
+### Get Tags
+GET http://localhost:3000/api/tags/
+
+### ====== POST ======
+
+### Create/Update tag
+POST http://localhost:3000/api/tags/
+Content-Type: application/json
+
+{
+  "name": "test",
+  "color": "#FFFFFF"
+}
+
+### Set Tag to Project
+POST http://localhost:3000/api/projects/{{projectId}}/tags
+Content-Type: application/json
+
+{
+  "tagId": "{{tagId}}"
+}
+
+### ====== DELETE ======
+
+### Delete Tag from Project
+DELETE http://localhost:3000/api/projects/{{projectId}}/tags/{{tagId}}
+Content-Type: application/json

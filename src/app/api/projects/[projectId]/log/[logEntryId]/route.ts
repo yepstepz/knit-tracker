@@ -1,0 +1,19 @@
+import { editLogEntry } from "./_lib/editLogEntry";
+import { deleteLogEntry } from "./_lib/deleteLogEntry";
+
+export async function PATCH(
+  req: Request,
+  ctx: { params: Promise<{ projectId: string; logEntryId: string }> }
+) {
+  const { projectId, logEntryId } = await ctx.params;
+  const body = await req.json().catch(() => null);
+  return editLogEntry(projectId, logEntryId, body);
+}
+
+export async function DELETE(
+  _req: Request,
+  ctx: { params: Promise<{ projectId: string; logEntryId: string }> }
+) {
+  const { projectId, logEntryId } = await ctx.params;
+  return deleteLogEntry(projectId, logEntryId);
+}
