@@ -1,36 +1,97 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+## Local development
 
-## Getting Started
+### Prerequisites
 
-First, run the development server:
+* Node.js (your project currently uses Prisma 7, so use a recent Node version that satisfies the Prisma engine requirements).
+* PostgreSQL running locally (Homebrew service is fine).
+* A local database created for the app.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+### Environment variables
+
+Create a file `.env.local` in the project root:
+
+```
+DATABASE_URL="postgresql://USER:PASSWORD@localhost:5432/knit_tracker?schema=public"
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Replace `USER`, `PASSWORD`, and database name with your local values.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### Install dependencies
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```
+npm install
+```
 
-## Learn More
+### Generate Prisma Client
 
-To learn more about Next.js, take a look at the following resources:
+If you changed `prisma/schema.prisma` or pulled changes that touched Prisma, regenerate the client:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```
+npx prisma generate
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### Run migrations (create/update tables)
 
-## Deploy on Vercel
+Apply migrations to your local database:
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+```
+npx prisma migrate dev
+```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### Start the app
+
+Run Next.js in dev mode:
+
+```
+npm run dev
+```
+
+Open:
+
+* [http://localhost:3000](http://localhost:3000)
+
+---
+
+## Local database workflow
+
+### Check current migration status
+
+```
+npx prisma migrate status
+```
+
+### Reset the local database (wipe all data)
+
+This drops data and recreates the schema from migrations:
+
+```
+npm run db:reset
+```
+
+Note: this is intended for local development only.
+
+### Seed the local database (add demo data)
+
+```
+npm run db:seed
+```
+
+### Reset + seed (fresh demo data)
+
+```
+npm run db:reset:seed
+```
+
+### View data with Prisma Studio
+
+```
+npx prisma studio
+```
+
+---
+
+## Notes
+
+* Keep `prisma/migrations/` committed to git. Migrations are the source of truth for evolving the schema.
+* If you see Prisma errors after changing schema, run `npx prisma generate` again.
+* If API endpoints fail with “column/table does not exist”, run `npx prisma migrate dev` (or `npm run db:reset` if you want a clean slate).
