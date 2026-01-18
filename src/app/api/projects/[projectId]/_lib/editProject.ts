@@ -54,7 +54,7 @@ function toPreview(p: any): ProjectPreview {
 }
 
 export async function editProject(projectId: string, body: unknown) {
-  if (!projectId) return badRequest("projectId required");
+  if (!projectId) return badRequest("[projectId] required");
   if (!body || typeof body !== "object") return badRequest("invalid json");
 
   const b = body as EditProjectBody;
@@ -103,7 +103,7 @@ export async function editProject(projectId: string, body: unknown) {
       return badRequest("basedOnProjectId must be string or null");
     }
     if (b.basedOnProjectId === projectId) {
-      return badRequest("basedOnProjectId cannot be the same as projectId");
+      return badRequest("basedOnProjectId cannot be the same as [projectId]");
     }
     data.basedOnProjectId = b.basedOnProjectId ?? null;
   }

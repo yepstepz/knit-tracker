@@ -1,0 +1,25 @@
+.tabs {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 10px;
+}
+
+.tab,
+.active {
+    border: 1px solid var(--border);
+    padding: 8px 12px;
+    border-radius: 999px;
+    text-decoration: none;
+    font-size: 13px;
+    color: var(--link);
+}
+
+.tab:hover {
+    color: var(--linkHover);
+    border-color: color-mix(in srgb, var(--border) 60%, #000 40%);
+}
+
+.active {
+    background: var(--accentSoft);
+    color: var(--linkHover);
+}

@@ -7,7 +7,7 @@ export async function POST(
   ctx: { params: Promise<{ projectId: string }> }
 ) {
   const { projectId } = await ctx.params;
-  if (!projectId) return badRequest("projectId required");
+  if (!projectId) return badRequest("[projectId] required");
 
   try {
     await prisma.project.update({

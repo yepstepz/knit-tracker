@@ -26,7 +26,7 @@ export async function nextPhotoSortOrder(where: { projectId?: string; logEntryId
 /**
  * Общий парсер входа для create фото.
  * - alt defaults to caption (если alt не передали)
- * - sortOrder: если не передали -> в конец (max+1) в рамках projectId или logEntryId
+ * - sortOrder: если не передали -> в конец (max+1) в рамках [projectId] или logEntryId
  */
 export async function parseCreatePhotoInput(
   body: unknown,

@@ -21,7 +21,7 @@ export async function editLogEntry(
   body: unknown
 ) {
   if (!projectId || !logEntryId) {
-    return badRequest("projectId and logEntryId required");
+    return badRequest("[projectId] and logEntryId required");
   }
 
   if (!body || typeof body !== "object") {

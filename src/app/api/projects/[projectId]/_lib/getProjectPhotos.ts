@@ -3,7 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { ok, badRequest, notFound } from "@/server/helpers/http";
 
 export async function getProjectPhotos(projectId: string) {
-  if (!projectId) return badRequest("projectId required");
+  if (!projectId) return badRequest("[projectId] required");
 
   // опционально, но полезно: 404 если проекта нет
   const project = await prisma.project.findUnique({

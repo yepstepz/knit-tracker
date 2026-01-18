@@ -7,7 +7,7 @@ export async function POST(
   ctx: { params: Promise<{ projectId: string }> }
 ) {
   const { projectId } = await ctx.params;
-  if (!projectId) return badRequest("projectId required");
+  if (!projectId) return badRequest("[projectId] required");
 
   const body = await req.json().catch(() => null);
   const tagId = typeof body?.tagId === "string" ? body.tagId : "";

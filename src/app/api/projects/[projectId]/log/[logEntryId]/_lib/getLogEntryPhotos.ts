@@ -5,7 +5,7 @@ import { logEntryBelongsToProject } from "@/server/helpers/log";
 
 export async function getLogEntryPhotos(projectId: string, logEntryId: string) {
   if (!projectId || !logEntryId) {
-    return badRequest("projectId and logEntryId required");
+    return badRequest("[projectId] and logEntryId required");
   }
 
   const belongs = await logEntryBelongsToProject(projectId, logEntryId);

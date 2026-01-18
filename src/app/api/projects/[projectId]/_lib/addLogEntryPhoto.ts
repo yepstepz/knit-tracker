@@ -9,7 +9,7 @@ export async function addLogEntryPhoto(
   logEntryId: string,
   body: unknown
 ) {
-  if (!projectId || !logEntryId) return badRequest("projectId and logEntryId required");
+  if (!projectId || !logEntryId) return badRequest("[projectId] and logEntryId required");
 
   const okBelongs = await logEntryBelongsToProject(projectId, logEntryId);
   if (!okBelongs) return notFound();

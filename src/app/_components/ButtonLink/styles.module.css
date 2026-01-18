@@ -1,0 +1,28 @@
+.ghost,
+.back,
+.outline {
+    text-decoration: none;
+    color: var(--link);
+    border: 1px solid var(--border);
+    padding: 8px 12px;
+    border-radius: 999px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.outline {
+    border-radius: 12px;
+}
+
+.ghost:hover,
+.back:hover,
+.outline:hover {
+    color: var(--linkHover);
+    border-color: color-mix(in srgb, var(--border) 60%, #000 40%);
+}
+
+.disabled {
+    pointer-events: none;
+    opacity: 0.55;
+}

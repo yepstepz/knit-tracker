@@ -1,0 +1,29 @@
+.cloud {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.item,
+.itemActive {
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    padding: 7px 10px;
+    text-decoration: none;
+    font-size: 13px;
+    color: var(--link);
+    max-width: 100%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.item:hover {
+    color: var(--linkHover);
+    border-color: color-mix(in srgb, var(--border) 60%, #000 40%);
+}
+
+.itemActive {
+    background: var(--accentSoft);
+    color: var(--linkHover);
+}

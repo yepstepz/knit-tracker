@@ -8,7 +8,7 @@ export async function DELETE(
 ) {
   const { projectId, tagId } = await ctx.params;
 
-  if (!projectId) return badRequest("projectId required");
+  if (!projectId) return badRequest("[projectId] required");
   if (!tagId) return badRequest("tagId required");
 
   // deleteMany: чтобы не кидать исключение, если связи нет

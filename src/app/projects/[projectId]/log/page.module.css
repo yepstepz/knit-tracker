@@ -1,0 +1,163 @@
+.page {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 22px 18px 28px;
+}
+
+.topBar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 12px;
+}
+
+.topRight {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+}
+
+/* Outer feed container */
+.shell {
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--surface);
+    padding: 14px;
+}
+
+/* Header inside shell */
+.head {
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 12px;
+}
+
+.kicker {
+    font-size: 12px;
+    color: var(--muted);
+    margin-bottom: 4px;
+}
+
+.title {
+    margin: 0 0 6px;
+    font-size: 18px;
+    font-weight: 750;
+    line-height: 1.25;
+}
+
+.meta {
+    font-size: 13px;
+    color: var(--muted);
+}
+
+/* Feed list */
+.feed {
+    display: grid;
+    gap: 10px;
+}
+
+/* Each log card (twitter-ish) */
+.item {
+    display: block;
+    text-decoration: none;
+    color: inherit;
+
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 12px;
+
+    background: var(--surface);
+}
+
+.item:hover {
+    background: var(--accentSoft);
+}
+
+.itemTop {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 10px;
+    margin-bottom: 8px;
+}
+
+.itemTitle {
+    font-size: 14px;
+    font-weight: 700;
+    line-height: 1.25;
+
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.itemDate {
+    font-size: 12px;
+    color: var(--muted);
+    white-space: nowrap;
+}
+
+.photo {
+    width: 100%;
+    height: 220px;
+    object-fit: cover;
+    border-radius: 12px;
+    border: 1px solid var(--border);
+    background: var(--accentSoft);
+    margin: 6px 0 8px;
+}
+
+.text {
+    white-space: pre-wrap;
+    line-height: 1.5;
+    color: var(--text);
+    font-size: 13px;
+}
+
+.muted {
+    color: var(--muted);
+    font-size: 13px;
+}
+
+.openRow {
+    margin-top: 10px;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.openHint {
+    font-size: 13px;
+    color: var(--link);
+}
+
+.item:hover .openHint {
+    color: var(--linkHover);
+}
+
+/* Pagination: centered and modest */
+.paginationWrap {
+    margin-top: 14px;
+    display: flex;
+    justify-content: center;
+}
+
+/* make Pagination not stretch */
+.paginationWrap :global(nav) {
+    width: min(360px, 100%);
+}
+
+.empty {
+    padding: 16px 0 2px;
+    color: var(--muted);
+}
+
+@media (max-width: 760px) {
+    .photo {
+        height: 180px;
+    }
+    .itemTitle {
+        white-space: normal;
+    }
+}

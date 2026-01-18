@@ -1,0 +1,26 @@
+.panel {
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 14px;
+}
+
+.section {
+    padding: 8px 0 14px;
+    border-bottom: 1px dashed var(--border);
+}
+
+.section:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+}
+
+.sectionTitle {
+    font-size: 14px;
+    font-weight: 650;
+    margin-bottom: 8px;
+}
+
+.muted {
+    color: var(--muted);
+    font-size: 13px;
+}

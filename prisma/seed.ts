@@ -25,129 +25,184 @@ function assertSafeToSeed() {
   }
 }
 
+// 1x1 прозрачный gif — никаких сетевых запросов
+const PLACEHOLDER_URI =
+  "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw==";
+
+function daysAgo(n: number) {
+  return new Date(Date.now() - n * 24 * 60 * 60 * 1000);
+}
+
+function pick<T>(arr: T[], i: number) {
+  return arr[i % arr.length];
+}
+
+function uniqById(items: { id: string }[]) {
+  return Array.from(new Map(items.map((x) => [x.id, x])).values());
+}
+
 async function main() {
   assertSafeToSeed();
 
   // --- Tags (upsert by name) ---
   const tagSweater = await prisma.tag.upsert({
     where: { name: "свитер" },
-    create: { name: "свитер", color: "#FFFFFF" },
+    create: { name: "свитер", color: "#9BB7A5" },
     update: {},
   });
 
   const tagGift = await prisma.tag.upsert({
     where: { name: "подарок" },
-    create: { name: "подарок", color: "#FFFFFF" },
+    create: { name: "подарок", color: "#C9A38B" },
     update: {},
   });
 
   const tagRepeat = await prisma.tag.upsert({
     where: { name: "повтор" },
-    create: { name: "повтор", color: "#FFFFFF" },
+    create: { name: "повтор", color: "#B9B6E7" },
     update: {},
   });
 
-  const project1 = await prisma.project.create({
-    data: {
-      title: "Свитер реглан (seed #1)",
-      status: ProjectStatus.ACTIVE,
-      descriptionMd: "## Seed\nТестовый проект #1 для UI.",
-      yarnPlan: "Пряжа: (пока текст)",
-      startedAt: new Date(),
-      tags: {
-        create: [{ tagId: tagSweater.id }, { tagId: tagGift.id }],
-      },
-      photos: {
-        create: [
+  const tagSummer = await prisma.tag.upsert({
+    where: { name: "лето" },
+    create: { name: "лето", color: "#E8D7A8" },
+    update: {},
+  });
+
+  const tagQuick = await prisma.tag.upsert({
+    where: { name: "быстро" },
+    create: { name: "быстро", color: "#89A7C2" },
+    update: {},
+  });
+
+  const allTags = [tagSweater, tagGift, tagRepeat, tagSummer, tagQuick];
+
+  // --- Create 18 projects ---
+  const createdProjects: { id: string }[] = [];
+
+  for (let i = 1; i <= 18; i++) {
+    const status = pick(
+      [ProjectStatus.IDEA, ProjectStatus.ACTIVE, ProjectStatus.PAUSED, ProjectStatus.FINISHED],
+      i
+    );
+
+    const archivedAt = i % 9 === 0 ? daysAgo(3) : null;
+
+    const basedOnProjectId =
+      i % 6 === 0 && createdProjects.length > 0
+        ? createdProjects[createdProjects.length - 1].id
+        : null;
+
+    // теги: 2-3 штуки на проект (и дедуп!)
+    const rawTagSet =
+      i % 6 === 0
+        ? [tagSweater, tagRepeat, pick(allTags, i)]
+        : i % 3 === 0
+          ? [tagGift, pick(allTags, i)]
+          : [tagSweater, pick(allTags, i)];
+
+    const uniqueTagIds = uniqById(rawTagSet).map((t) => t.id);
+
+    const projectPhotos =
+      i % 4 === 0
+        ? [
           {
-            uri: "https://picsum.photos/seed/knit-cover-1/1200/900",
-            caption: "Кавер #1",
-            alt: "Кавер #1",
+            uri: PLACEHOLDER_URI,
+            caption: `Cover #${i}`,
+            alt: `Cover #${i}`,
             role: PhotoRole.COVER,
             sortOrder: 1,
           },
           {
-            uri: "https://picsum.photos/seed/knit-gallery-1/1200/900",
-            caption: "Галерея #1",
-            alt: "Галерея #1",
+            uri: PLACEHOLDER_URI,
+            caption: `Gallery A #${i}`,
+            alt: `Gallery A #${i}`,
             role: PhotoRole.GALLERY,
             sortOrder: 2,
           },
-        ],
-      },
-      logEntries: {
-        create: [
           {
-            title: "Начала вязать",
-            contentMd: "Набрала петли, сделала резинку.",
-            happenedAt: new Date(),
+            uri: PLACEHOLDER_URI,
+            caption: `Gallery B #${i}`,
+            alt: `Gallery B #${i}`,
+            role: PhotoRole.GALLERY,
+            sortOrder: 3,
           },
+        ]
+        : [
           {
-            title: "Связала рукав",
-            contentMd: "Левый рукав готов.",
-            happenedAt: new Date(),
-          },
-        ],
-      },
-    },
-    include: { logEntries: true },
-  });
-
-  if (project1.logEntries[0]) {
-    await prisma.photo.create({
-      data: {
-        logEntryId: project1.logEntries[0].id,
-        uri: "https://picsum.photos/seed/knit-log-1/1200/900",
-        caption: "Прогресс #1",
-        alt: "Прогресс #1",
-        role: PhotoRole.GALLERY,
-        sortOrder: 1,
-      },
-    });
-  }
-
-  // --- Project #2 (based on Project #1) ---
-  const project2 = await prisma.project.create({
-    data: {
-      title: "Свитер реглан (повтор, seed #2)",
-      status: ProjectStatus.IDEA,
-      descriptionMd: "## Seed\nТестовый проект #2 — повтор на базе проекта #1.",
-      yarnPlan: "Буду использовать похожую пряжу",
-      basedOnProjectId: project1.id, // ✅ связь с первым
-      tags: {
-        create: [{ tagId: tagSweater.id }, { tagId: tagRepeat.id }],
-      },
-      photos: {
-        create: [
-          {
-            uri: "https://picsum.photos/seed/knit-cover-2/1200/900",
-            caption: "Кавер #2",
-            alt: "Кавер #2",
+            uri: PLACEHOLDER_URI,
+            caption: `Cover #${i}`,
+            alt: `Cover #${i}`,
             role: PhotoRole.COVER,
             sortOrder: 1,
           },
-        ],
-      },
-      logEntries: {
-        create: [
-          {
-            title: "Идея повтора",
-            contentMd: "Хочу повторить с другим цветом.",
-            happenedAt: new Date(),
+        ];
+
+    const logsCount = 2 + (i % 3); // 2..4
+    const logEntries = Array.from({ length: logsCount }).map((_, idx) => {
+      const happenedAt = daysAgo(20 - i - idx);
+
+      const base = {
+        title: `Log ${idx + 1} (seed #${i})`,
+        contentMd: `Seed log entry ${idx + 1} for project #${i}.`,
+        happenedAt,
+      };
+
+      if (idx === 0 && i % 2 === 0) {
+        return {
+          ...base,
+          photo: {
+            create: {
+              uri: PLACEHOLDER_URI,
+              caption: `Progress photo (seed #${i})`,
+              alt: `Progress photo (seed #${i})`,
+              role: PhotoRole.GALLERY,
+              sortOrder: 1,
+            },
           },
-        ],
+        };
+      }
+
+      return base;
+    });
+
+    const project = await prisma.project.create({
+      data: {
+        title: `Project (seed #${i})`,
+        status,
+        descriptionMd: `## Seed\nТестовый проект #${i} для UI.`,
+        yarnPlan: `Пряжа: seed plan #${i}`,
+        startedAt: status !== ProjectStatus.IDEA ? daysAgo(30 - i) : null,
+        finishedAt: status === ProjectStatus.FINISHED ? daysAgo(2 + (i % 5)) : null,
+        archivedAt,
+
+        ...(basedOnProjectId ? { basedOnProjectId } : {}),
+
+        tags: {
+          create: uniqueTagIds.map((tagId) => ({ tagId })),
+        },
+
+        photos: {
+          create: projectPhotos,
+        },
+
+        logEntries: {
+          create: logEntries as any,
+        },
       },
-    },
-  });
+      select: { id: true },
+    });
+
+    createdProjects.push(project);
+  }
 
   console.log("✅ Seed done:", {
-    project1Id: project1.id,
-    project2Id: project2.id,
-    project2BasedOn: project1.id,
+    createdProjects: createdProjects.length,
+    sampleIds: createdProjects.slice(0, 3).map((p) => p.id),
   });
 }
 
-console.log('Generating seed...');
+console.log("Generating seed...");
 main()
   .catch((e) => {
     console.error("❌ Seed failed:", e);

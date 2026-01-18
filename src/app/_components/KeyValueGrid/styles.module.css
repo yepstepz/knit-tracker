@@ -1,0 +1,21 @@
+.kv {
+    display: grid;
+    gap: 8px;
+}
+
+.row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+}
+
+.k {
+    font-size: 12px;
+    color: var(--muted);
+}
+
+.v {
+    font-size: 13px;
+    font-weight: 600;
+    text-align: right;
+}

@@ -28,7 +28,7 @@ function toPreview(p: any): ProjectPreview {
 }
 
 export async function getProject(projectId: string) {
-  if (!projectId) return badRequest("projectId required");
+  if (!projectId) return badRequest("[projectId] required");
 
   const project = await prisma.project.findUnique({
     where: { id: projectId },
@@ -79,6 +79,7 @@ export async function getProject(projectId: string) {
 
   return ok({
     ...project,
+    tags: project.tags.map((x) => x.tag),
     logEntries,
     logEntriesHasMore: hasMoreLogs,
   });
