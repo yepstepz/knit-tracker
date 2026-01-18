@@ -1,0 +1,2 @@
+### Get log entries (page 2, default limit)
+GET {{baseUrl}}/api/projects/{{projectIdForPatch}}/log?page=3

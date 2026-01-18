@@ -21,10 +21,14 @@ export async function addLogEntryPhoto(
   });
   if (!parsed.ok) return badRequest(parsed.error);
 
-  const photo = await prisma.photo.create({
-    data: {
+  const photo = await prisma.photo.upsert({
+    where: { logEntryId },
+    update: {
+      ...parsed.value, // uri, caption, alt(default=caption), role, sortOrder
+    },
+    create: {
       logEntryId,
-      ...parsed.value, // uri, caption, alt(по умолчанию = caption), role, sortOrder
+      ...parsed.value,
     },
   });
 

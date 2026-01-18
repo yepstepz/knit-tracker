@@ -1,5 +1,5 @@
 ### Get project by id (подставь id)
-GET http://localhost:3000/api/projects/{{projectId}}
+GET http://localhost:3000/api/projects/{{projectIdForPatch}}
 
 ### ====== POST ======
 

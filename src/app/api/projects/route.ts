@@ -2,34 +2,83 @@ import { prisma } from "@/lib/prisma";
 import { PhotoRole, ProjectStatus } from "@prisma/client";
 import { ok, created, badRequest } from "@/server/helpers/http";
 
+const DEFAULT_LIMIT = 10;
+const MAX_LIMIT = 50;
+
+function parsePositiveInt(value: string | null, fallback: number) {
+  if (value === null) return fallback;
+  const n = Number(value);
+  if (!Number.isInteger(n) || n < 1) return null;
+  return n;
+}
+
+function clamp(n: number, min: number, max: number) {
+  return Math.max(min, Math.min(max, n));
+}
+
 export async function GET(req: Request) {
   const url = new URL(req.url);
   const tagId = url.searchParams.get("tagId");
   const archived = url.searchParams.get("archived"); // "1" -> архив, иначе активные
 
-  const where: any = archived === "1"
-    ? { archivedAt: { not: null } }
-    : { archivedAt: null };
+  const pageParsed = parsePositiveInt(url.searchParams.get("page"), 1);
+  if (pageParsed === null) return badRequest("page must be integer >= 1");
+
+  const limitParsed = parsePositiveInt(
+    url.searchParams.get("limit"),
+    DEFAULT_LIMIT
+  );
+  if (limitParsed === null) return badRequest("limit must be integer >= 1");
+
+  const page = pageParsed;
+  const limit = clamp(limitParsed, 1, MAX_LIMIT);
+  const skip = (page - 1) * limit;
+
+  const where: any =
+    archived === "1" ? { archivedAt: { not: null } } : { archivedAt: null };
 
   if (tagId) {
     where.tags = { some: { tagId } };
   }
 
+  const total = await prisma.project.count({ where });
+  const totalPages = Math.max(1, Math.ceil(total / limit));
+
   const projects = await prisma.project.findMany({
     where,
     orderBy: { updatedAt: "desc" },
+    skip,
+    take: limit,
     include: {
       tags: { include: { tag: true } },
-      photos: { where: { role: PhotoRole.COVER }, take: 1 },
+      photos: { where: { role: PhotoRole.COVER }, take: 1 }, // берём только cover
     },
   });
 
-  const dto = projects.map((p) => ({
-    ...p,
+  const items = projects.map((p) => ({
+    id: p.id,
+    title: p.title,
+    status: p.status,
+    descriptionMd: p.descriptionMd,
+    yarnPlan: p.yarnPlan,
+    createdAt: p.createdAt,
+    updatedAt: p.updatedAt,
+    startedAt: p.startedAt,
+    finishedAt: p.finishedAt,
+    archivedAt: p.archivedAt,
+    basedOnProjectId: p.basedOnProjectId,
+
     tags: p.tags.map((x) => x.tag),
+    cover: p.photos[0] ?? null,
   }));
 
-  return ok(dto);
+  return ok({
+    items,
+    page,
+    limit,
+    total,
+    totalPages,
+  });
 }
 
 export async function POST(req: Request) {
@@ -44,7 +93,8 @@ export async function POST(req: Request) {
     data: {
       title,
       status: body?.status ?? ProjectStatus.IDEA,
-      descriptionMd: typeof body?.descriptionMd === "string" ? body.descriptionMd : "",
+      descriptionMd:
+        typeof body?.descriptionMd === "string" ? body.descriptionMd : "",
       yarnPlan: typeof body?.yarnPlan === "string" ? body.yarnPlan : "",
     },
   });

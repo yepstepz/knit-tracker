@@ -1,9 +1,9 @@
-GET http://localhost:3000/api/projects/{{projectId}}/log
+GET http://localhost:3000/api/projects/{{projectIdForPatch}}/log
 
 ### ====== POST ======
 
 ### Add log entry
-POST http://localhost:3000/api/projects/{{projectId}}/log
+POST http://localhost:3000/api/projects/{{projectIdForPatch}}/log
 Content-Type: application/json
 
 {
@@ -23,7 +23,7 @@ Content-Type: application/json
 }
 
 ### Patch log entry (happenedAt)
-PATCH {{baseUrl}}/api/projects/{{projectId}}/log/{{logEntryId}}
+PATCH {{baseUrl}}/api/projects/{{projectId}}/log/{{logEntryId2}}
 Content-Type: application/json
 
 {

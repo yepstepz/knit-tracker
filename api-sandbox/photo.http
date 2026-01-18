@@ -30,11 +30,11 @@ Content-Type: application/json
 GET {{baseUrl}}/api/projects/{{projectId}}/log/{{logEntryId}}/photos
 
 ### Add log entry photo (alt defaults to caption if omitted)
-POST {{baseUrl}}/api/projects/{{projectId}}/log/{{logEntryId}}/photos
+POST {{baseUrl}}/api/projects/{{projectIdForPatch}}/log/{{logEntryId2}}/photos
 Content-Type: application/json
 
 {
-  "uri": "https://example.com/progress.jpg",
+  "uri": "https://example.com/progress2.jpg",
   "caption": "Рукав готов на 70%",
   "role": "GALLERY"
 }

@@ -3,6 +3,8 @@ import { prisma } from "@/lib/prisma";
 import { ok, badRequest, notFound } from "@/server/helpers/http";
 import { PhotoRole } from "@prisma/client";
 
+const LOG_PREVIEW_LIMIT = 5;
+
 type ProjectPreview = {
   id: string;
   title: string;
@@ -35,7 +37,8 @@ export async function getProject(projectId: string) {
       photos: true,
       logEntries: {
         orderBy: { happenedAt: "desc" },
-        include: { photos: true },
+        take: LOG_PREVIEW_LIMIT + 1,
+        include: { photo: true },
       },
 
       // preview "основан на"
@@ -69,11 +72,14 @@ export async function getProject(projectId: string) {
 
   if (!project) return notFound();
 
+  const hasMoreLogs = project.logEntries.length > LOG_PREVIEW_LIMIT;
+  const logEntries = hasMoreLogs
+    ? project.logEntries.slice(0, LOG_PREVIEW_LIMIT)
+    : project.logEntries;
+
   return ok({
     ...project,
-    tags: project.tags.map((x) => x.tag),
-
-    basedOn: project.basedOn ? toPreview(project.basedOn) : null,
-    derivedProjects: (project.derivedProjects ?? []).map(toPreview),
+    logEntries,
+    logEntriesHasMore: hasMoreLogs,
   });
 }

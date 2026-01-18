@@ -87,10 +87,10 @@ CREATE UNIQUE INDEX "Tag_name_key" ON "Tag"("name");
 CREATE INDEX "ProjectTag_tagId_idx" ON "ProjectTag"("tagId");
 
 -- CreateIndex
-CREATE INDEX "Photo_projectId_idx" ON "Photo"("projectId");
+CREATE UNIQUE INDEX "Photo_logEntryId_key" ON "Photo"("logEntryId");
 
 -- CreateIndex
-CREATE INDEX "Photo_logEntryId_idx" ON "Photo"("logEntryId");
+CREATE INDEX "Photo_projectId_idx" ON "Photo"("projectId");
 
 -- AddForeignKey
 ALTER TABLE "Project" ADD CONSTRAINT "Project_basedOnProjectId_fkey" FOREIGN KEY ("basedOnProjectId") REFERENCES "Project"("id") ON DELETE SET NULL ON UPDATE CASCADE;

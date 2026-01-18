@@ -7,13 +7,13 @@ datasource db {
 }
 
 model Project {
-  id            String            @id @default(uuid()) @db.Uuid
+  id            String        @id @default(uuid()) @db.Uuid
   title         String
-  status        ProjectStatus     @default(IDEA)
-  descriptionMd String            @default("")
-  yarnPlan      String            @default("")
-  createdAt     DateTime          @default(now())
-  updatedAt     DateTime          @updatedAt
+  status        ProjectStatus @default(IDEA)
+  descriptionMd String        @default("")
+  yarnPlan      String        @default("")
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
   startedAt     DateTime?
   finishedAt    DateTime?
   archivedAt    DateTime?
@@ -22,9 +22,9 @@ model Project {
   basedOn          Project?  @relation("ProjectBasedOn", fields: [basedOnProjectId], references: [id], onDelete: SetNull)
   derivedProjects  Project[] @relation("ProjectBasedOn")
 
-  photos        Photo[]
-  logEntries    ProjectLogEntry[]
-  tags          ProjectTag[]
+  photos     Photo[]
+  logEntries ProjectLogEntry[]
+  tags       ProjectTag[]
 
   @@index([status])
   @@index([archivedAt])
@@ -39,18 +39,18 @@ model ProjectLogEntry {
   contentMd  String   @default("")
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
-  photos     Photo[]
+  photo      Photo?   @relation("LogEntryPhoto")
   project    Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
 
   @@index([projectId, happenedAt(sort: Desc)])
 }
 
 model Tag {
-  id       String       @id @default(uuid()) @db.Uuid
-  name     String       @unique
-  color    String?
-  projects ProjectTag[]
-  createdAt DateTime @default(now())
+  id        String       @id @default(uuid()) @db.Uuid
+  name      String       @unique
+  color     String?
+  projects  ProjectTag[]
+  createdAt DateTime     @default(now())
 }
 
 model ProjectTag {
@@ -73,12 +73,11 @@ model Photo {
   sortOrder  Int              @default(0)
   createdAt  DateTime         @default(now())
   projectId  String?          @db.Uuid
-  logEntryId String?          @db.Uuid
-  logEntry   ProjectLogEntry? @relation(fields: [logEntryId], references: [id], onDelete: Cascade)
+  logEntryId String?          @unique @db.Uuid
+  logEntry   ProjectLogEntry? @relation("LogEntryPhoto", fields: [logEntryId], references: [id], onDelete: Cascade)
   project    Project?         @relation(fields: [projectId], references: [id], onDelete: Cascade)
 
   @@index([projectId])
-  @@index([logEntryId])
 }
 
 enum ProjectStatus {
