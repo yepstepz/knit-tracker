@@ -1,5 +1,6 @@
 import Link from "next/link";
 import styles from "./styles.module.css";
+import { Tag } from "@/types";
 
 export type TagCloudTag = {
   id: string;
@@ -13,7 +14,7 @@ export function TagCloud({
                            archived,
                            limit,
                          }: {
-  tags: TagCloudTag[];
+  tags: Tag[];
   activeTagId?: string;
   archived?: "1";
   limit?: string;

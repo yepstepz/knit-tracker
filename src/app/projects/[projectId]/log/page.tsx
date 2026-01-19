@@ -1,40 +1,10 @@
 import Link from "next/link";
 import styles from "./page.module.css";
-import { apiGet } from "../../../_lib/serverFetch";
-import { qs } from "../../../_lib/qs";
-import { fmtDate } from "../../../_lib/format";
-import { ButtonLink, Pagination, Badge } from "../../../_components";
-
-type ProjectMini = {
-  id: string;
-  title: string;
-  status: string;
-  archivedAt: string | null;
-};
-
-type Photo = { uri: string; alt?: string | null; caption?: string | null };
-
-type LogEntry = {
-  id: string;
-  happenedAt: string;
-  title: string;
-  contentMd: string;
-  photo?: Photo | null;
-};
-
-type Paginated<T> = {
-  items: T[];
-  page: number;
-  limit: number;
-  total: number;
-  totalPages: number;
-};
-
-function preview(md: string, max = 260) {
-  const s = (md ?? "").trim();
-  if (!s) return "";
-  return s.length > max ? s.slice(0, max).trim() + "…" : s;
-}
+import { apiGet } from "@/app/_lib/serverFetch";
+import { qs } from "@/app/_lib/qs";
+import { fmtDate, markdownPreview } from "@/app/_lib/format";
+import { ButtonLink, Pagination, Badge } from "@/app/_components";
+import { LogEntry, Paginated, ProjectDetail } from "@/types";
 
 export default async function ProjectLogPage({
                                                params,
@@ -50,7 +20,7 @@ export default async function ProjectLogPage({
   const limit = sp.limit ?? "10";
 
   const [project, logs] = await Promise.all([
-    apiGet<ProjectMini>(`/api/projects/${projectId}`),
+    apiGet<ProjectDetail>(`/api/projects/${projectId}`),
     apiGet<Paginated<LogEntry>>(`/api/projects/${projectId}/log${qs({ page, limit })}`),
   ]);
 
@@ -102,7 +72,7 @@ export default async function ProjectLogPage({
                 ) : null}
 
                 {e.contentMd?.trim() ? (
-                  <div className={styles.text}>{preview(e.contentMd)}</div>
+                  <div className={styles.text}>{markdownPreview(e.contentMd)}</div>
                 ) : (
                   <div className={styles.muted}>No text</div>
                 )}

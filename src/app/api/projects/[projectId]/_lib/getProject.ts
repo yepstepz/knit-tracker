@@ -1,47 +1,25 @@
 import "server-only";
 import { prisma } from "@/lib/prisma";
 import { ok, badRequest, notFound } from "@/server/helpers/http";
-import { PhotoRole } from "@prisma/client";
+import { PhotoRole, Prisma } from "@prisma/client";
 
 const LOG_PREVIEW_LIMIT = 5;
-
-type ProjectPreview = {
-  id: string;
-  title: string;
-  status: string;
-  createdAt: Date;
-  startedAt: Date | null;
-  cover: any | null; // Photo | null
-  tags: Array<{ id: string; name: string; color: string | null }>;
-};
-
-function toPreview(p: any): ProjectPreview {
-  return {
-    id: p.id,
-    title: p.title,
-    status: p.status,
-    createdAt: p.createdAt,
-    startedAt: p.startedAt,
-    cover: Array.isArray(p.photos) && p.photos.length > 0 ? p.photos[0] : null,
-    tags: Array.isArray(p.tags) ? p.tags.map((x: any) => x.tag) : [],
-  };
-}
 
 export async function getProject(projectId: string) {
   if (!projectId) return badRequest("[projectId] required");
 
-  const project = await prisma.project.findUnique({
+  const args = {
     where: { id: projectId },
     include: {
       tags: { include: { tag: true } },
       photos: true,
+
       logEntries: {
-        orderBy: { happenedAt: "desc" },
+        orderBy: { happenedAt: "desc" as const },
         take: LOG_PREVIEW_LIMIT + 1,
         include: { photo: true },
       },
 
-      // preview "основан на"
       basedOn: {
         select: {
           id: true,
@@ -54,8 +32,8 @@ export async function getProject(projectId: string) {
         },
       },
 
-      // preview "повторы"
       derivedProjects: {
+        orderBy: { updatedAt: "desc" as const },
         select: {
           id: true,
           title: true,
@@ -65,12 +43,22 @@ export async function getProject(projectId: string) {
           photos: { where: { role: PhotoRole.COVER }, take: 1 },
           tags: { include: { tag: true } },
         },
-        orderBy: { updatedAt: "desc" },
       },
     },
-  });
+  } satisfies Prisma.ProjectFindUniqueArgs;
 
+  const project = await prisma.project.findUnique(args);
   if (!project) return notFound();
+
+  let cover = null;
+  let photos = [];
+  for (let p in project.photos) {
+    if (project.photos[p].role === PhotoRole.COVER) {
+      cover = project.photos[p];
+      continue;
+    }
+    photos.push(project.photos[p]);
+  }
 
   const hasMoreLogs = project.logEntries.length > LOG_PREVIEW_LIMIT;
   const logEntries = hasMoreLogs
@@ -80,7 +68,25 @@ export async function getProject(projectId: string) {
   return ok({
     ...project,
     tags: project.tags.map((x) => x.tag),
+
+    cover,
+    photos,
+
     logEntries,
     logEntriesHasMore: hasMoreLogs,
+
+    basedOn: project.basedOn
+      ? {
+        ...project.basedOn,
+        tags: project.basedOn.tags.map((x) => x.tag),
+        cover: project.basedOn.photos[0] ?? null,
+      }
+      : null,
+
+    derivedProjects: project.derivedProjects.map((p) => ({
+      ...p,
+      tags: p.tags.map((x) => x.tag),
+      cover: p.photos[0] ?? null,
+    })),
   });
 }

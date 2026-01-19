@@ -24,27 +24,10 @@ export function ProjectHeader({
     <header className={styles.card}>
       <h1 className={styles.title}>{title}</h1>
 
-      <div className={styles.metaRow}>
-        <div className={styles.metaItem}>
-          <div className={styles.metaLabel}>Started</div>
-          <div className={styles.metaValue}>{fmt(startedAt)}</div>
-        </div>
-
-        <div className={styles.metaItem}>
-          <div className={styles.metaLabel}>Updated</div>
-          <div className={styles.metaValue}>{fmt(updatedAt)}</div>
-        </div>
-
-        <div className={styles.metaItem}>
-          <div className={styles.metaLabel}>Finished</div>
-          <div className={styles.metaValue}>{fmt(finishedAt)}</div>
-        </div>
-      </div>
-
       {tags.length ? (
         <div className={styles.tags}>
           {tags.map((t) => (
-            <TagChip key={t.id} tag={t} />
+            <TagChip key={t.id} tag={t} href={`/tags/${t.id}?page=1&limit=10`} />
           ))}
         </div>
       ) : (

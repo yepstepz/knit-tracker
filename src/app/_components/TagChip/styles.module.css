@@ -3,6 +3,8 @@
     display: inline-flex;
     align-items: center;
 
+    text-decoration: none;
+
     font-size: 13px;
     line-height: 1;
     padding: 7px 10px;

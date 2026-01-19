@@ -11,10 +11,6 @@
     gap: 6px;
 }
 
-.outline {
-    border-radius: 12px;
-}
-
 .ghost:hover,
 .back:hover,
 .outline:hover {
