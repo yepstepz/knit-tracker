@@ -1,4 +1,5 @@
 import Link from "next/link";
+import cn from 'classnames';
 import styles from "./page.module.css";
 import { apiGet } from "../../_lib/serverFetch";
 import { fmtDate } from "../../_lib/format";
@@ -39,12 +40,19 @@ export default async function ProjectPage({
           ← Projects
         </ButtonLink>
 
-        <Badge>{project.status}</Badge>
+        <div className={styles.topActions}>
+          <ButtonLink variant="outline" href={`/projects/${projectId}/edit`}>
+            Edit
+          </ButtonLink>
+
+          {project.archivedAt ? <Badge>Archived</Badge> : null}
+          <Badge>{project.status}</Badge>
+        </div>
       </div>
 
       <div className={styles.shell}>
-        <aside className={styles.left}>
-          <PhotoStack photos={photos} titleFallback={project.title} />
+        <aside className={cn(styles.left, styles.desktopBlocks)}>
+          <PhotoStack photos={photos} titleFallback={project.title}/>
         </aside>
 
         <section className={styles.right}>
@@ -55,6 +63,10 @@ export default async function ProjectPage({
             finishedAt={project.finishedAt}
             tags={tags}
           />
+
+          <div className={styles.mobileBlocks}>
+            <PhotoStack photos={photos} titleFallback={project.title}/>
+          </div>
 
           <div className={styles.contentGrid}>
             <section className={styles.main}>
@@ -78,10 +90,33 @@ export default async function ProjectPage({
                 </Section>
               </Panel>
 
+              <div className={styles.mobileBlocks}>
+                <Panel>
+                  <div className={styles.sideTitle}>Overview</div>
+                  <KeyValueGrid
+                    rows={[
+                      {k: "Status", v: project.status},
+                      {k: "Created", v: fmtDate(project.createdAt)},
+                      {k: "Updated", v: fmtDate(project.updatedAt)},
+                      {k: "Started", v: fmtDate(project.startedAt)},
+                      {k: "Finished", v: fmtDate(project.finishedAt)},
+                      {k: "Archived", v: fmtDate(project.archivedAt)},
+                    ]}
+                  />
+                </Panel>
+              </div>
+
               <Panel>
                 <Section>
                   <SectionTitle>Latest progress</SectionTitle>
-
+                  <div className={styles.toolbar} id='logs'>
+                    <ButtonLink
+                      variant="outline"
+                      href={`/projects/${projectId}/log/create?backTo=${encodeURIComponent(`/projects/${projectId}#logs`)}`}
+                    >
+                      Add log
+                    </ButtonLink>
+                  </div>
                   {project.logEntries?.length ? (
                     <div className={styles.logList}>
                       {project.logEntries.map((e) => (
@@ -90,7 +125,7 @@ export default async function ProjectPage({
                           href={`/projects/${projectId}/log/${e.id}`}
                           className={styles.logLink}
                         >
-                          <LogEntryCard entry={e} mode="preview" />
+                          <LogEntryCard entry={e} mode="preview"/>
                         </Link>
                       ))}
                     </div>
@@ -107,17 +142,17 @@ export default async function ProjectPage({
               </Panel>
             </section>
 
-            <aside className={styles.side}>
+            <aside className={cn(styles.side, styles.desktopBlocks)}>
               <Panel>
                 <div className={styles.sideTitle}>Overview</div>
                 <KeyValueGrid
                   rows={[
-                    { k: "Status", v: project.status },
-                    { k: "Created", v: fmtDate(project.createdAt) },
-                    { k: "Updated", v: fmtDate(project.updatedAt) },
-                    { k: "Started", v: fmtDate(project.startedAt) },
-                    { k: "Finished", v: fmtDate(project.finishedAt) },
-                    { k: "Archived", v: fmtDate(project.archivedAt) },
+                    {k: "Status", v: project.status},
+                    {k: "Created", v: fmtDate(project.createdAt)},
+                    {k: "Updated", v: fmtDate(project.updatedAt)},
+                    {k: "Started", v: fmtDate(project.startedAt)},
+                    {k: "Finished", v: fmtDate(project.finishedAt)},
+                    {k: "Archived", v: fmtDate(project.archivedAt)},
                   ]}
                 />
               </Panel>

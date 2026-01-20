@@ -69,7 +69,7 @@ export async function editLogEntry(
 
   const entry = await prisma.projectLogEntry.findUnique({
     where: { id: logEntryId },
-    include: { photos: true },
+    include: { photo: true },
   });
 
   // теоретически entry может быть null только если запись удалили между запросами

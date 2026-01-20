@@ -58,7 +58,10 @@ export async function GET(
 
   const items = await prisma.projectLogEntry.findMany({
     where,
-    orderBy: { happenedAt: "desc" },
+    orderBy: [
+      { happenedAt: "desc" },
+      { createdAt: "desc" },
+    ],
     skip,
     take: limit,
     include: { photo: true }, // one-to-one

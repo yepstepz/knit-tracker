@@ -15,7 +15,10 @@ export async function getProject(projectId: string) {
       photos: true,
 
       logEntries: {
-        orderBy: { happenedAt: "desc" as const },
+        orderBy: [
+          { happenedAt: "desc" },
+          { createdAt: "desc" },
+        ],
         take: LOG_PREVIEW_LIMIT + 1,
         include: { photo: true },
       },

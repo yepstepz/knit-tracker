@@ -1,0 +1,26 @@
+.page {
+}
+
+.topBar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 12px;
+}
+
+.badges {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.head {
+    margin-bottom: 12px;
+}
+
+.footer {
+    margin-top: 12px;
+    display: flex;
+    justify-content: flex-end;
+}

@@ -15,6 +15,7 @@ export async function PATCH(
   ctx: { params: Promise<{ projectId: string; logEntryId: string }> }
 ) {
   const { projectId, logEntryId } = await ctx.params;
+  console.log(projectId, logEntryId);
   const body = await req.json().catch(() => null);
   return editLogEntry(projectId, logEntryId, body);
 }

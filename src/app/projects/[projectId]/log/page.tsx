@@ -26,6 +26,7 @@ export default async function ProjectLogPage({
 
   const hrefForPage = (p: number) =>
     `/projects/${projectId}/log${qs({ page: String(p), limit })}`;
+  const backTo = `/projects/${projectId}/log${qs({ page, limit })}`;
 
   return (
     <main className={styles.page}>
@@ -33,11 +34,6 @@ export default async function ProjectLogPage({
         <ButtonLink variant="back" href={`/projects/${projectId}`}>
           ← Back
         </ButtonLink>
-
-        <div className={styles.topRight}>
-          {project.archivedAt ? <Badge>Archived</Badge> : null}
-          <Badge>{project.status}</Badge>
-        </div>
       </header>
 
       <section className={styles.shell}>
@@ -47,6 +43,12 @@ export default async function ProjectLogPage({
           <div className={styles.meta}>
             {logs.total} logs · page {logs.page} / {logs.totalPages}
           </div>
+        </div>
+
+        <div className={styles.toolbar}>
+          <ButtonLink variant="outline" href={`/projects/${projectId}/log/create?backTo=${encodeURIComponent(backTo)}`}>
+            Add log
+          </ButtonLink>
         </div>
 
         {logs.items.length ? (
@@ -88,7 +90,7 @@ export default async function ProjectLogPage({
         )}
 
         <div className={styles.paginationWrap}>
-          <Pagination page={logs.page} totalPages={logs.totalPages} hrefForPage={hrefForPage} />
+          <Pagination page={logs.page} totalPages={logs.totalPages} hrefForPage={hrefForPage}/>
         </div>
       </section>
     </main>

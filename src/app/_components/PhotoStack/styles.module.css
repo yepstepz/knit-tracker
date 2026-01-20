@@ -45,3 +45,28 @@
     place-items: center;
     color: var(--muted);
 }
+
+.mobilePhotos { display: none; }
+.leftDesktop { display: block; }
+
+/* mobile: horizontal slider */
+@media (max-width: 760px) {
+    .stack {
+        display: flex;
+        gap: 10px;
+        overflow-x: auto;
+        padding-bottom: 6px;
+        scroll-snap-type: x mandatory;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .stack::-webkit-scrollbar {
+        height: 8px;
+    }
+
+    .card {
+        flex: 0 0 85%;
+        scroll-snap-align: start;
+        padding-bottom: 0;
+    }
+}

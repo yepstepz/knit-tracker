@@ -2,8 +2,9 @@ import styles from "./page.module.css";
 import { notFound } from "next/navigation";
 import { apiGet } from "@/app/_lib/serverFetch";
 import { fmtDate } from "@/app/_lib/format";
-import { Badge, ButtonLink } from "@/app/_components";
+import { ButtonLink } from "@/app/_components";
 import { LogEntry, ProjectDetail } from "@/types";
+import { DeleteLogEntryButton } from "@/app/projects/[projectId]/log/_components/DeleteLogEntryButton";
 
 export default async function LogEntryPage({
                                              params,
@@ -35,11 +36,6 @@ export default async function LogEntryPage({
             ← All logs
           </ButtonLink>
         </div>
-
-        <div className={styles.rightBadges}>
-          {project.archivedAt ? <Badge>Archived</Badge> : null}
-          <Badge>{project.status}</Badge>
-        </div>
       </header>
 
       <section className={styles.shell}>
@@ -65,6 +61,17 @@ export default async function LogEntryPage({
           <div className={styles.muted}>No text</div>
         )}
       </section>
+      <div className={styles.actions}>
+        <ButtonLink variant="outline" href={`/projects/${projectId}/log/${logEntryId}/edit`}>
+          Edit log
+        </ButtonLink>
+
+        <DeleteLogEntryButton
+          projectId={projectId}
+          logEntryId={logEntryId}
+          redirectTo={`/projects/${projectId}/log?page=1&limit=10`}
+        />
+      </div>
     </main>
   );
 }

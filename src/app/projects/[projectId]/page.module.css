@@ -1,6 +1,9 @@
 .page {
 }
 
+.mobileBlocks{ display: none; }
+.desktopBlocks { display: block; }
+
 /* top row */
 .topBar {
     display: flex;
@@ -90,10 +93,31 @@
 }
 
 @media (max-width: 760px) {
+    .mobileBlocks { display: block; margin-top: 10px; }
+    .desktopBlocks { display: none; }
+
     .shell {
         grid-template-columns: 1fr;
     }
     .left {
         position: static;
     }
+}
+
+.toolbar {
+    margin: 12px 0;
+    display: flex;
+    width: 100%;
+    a {
+        width: 100%;
+        text-align: center;
+        display: inline;
+    }
+}
+
+.topActions {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    justify-content: flex-end;
 }
