@@ -1,115 +1,193 @@
-export type PatchProjectInput = Partial<{
+import type { PhotoDraftState } from "@/app/_components/Form/photos/types";
+import { getCoverId } from "@/app/_components/Form/photos/utils";
+
+// ------------------------
+// low-level fetch helpers
+// ------------------------
+export async function apiJson<T>(url: string, init?: RequestInit): Promise<T> {
+  const res = await fetch(url, {
+    ...init,
+    headers: { "Content-Type": "application/json", ...(init?.headers ?? {}) },
+  });
+  if (!res.ok) throw new Error(await res.text().catch(() => `HTTP ${res.status}`));
+  return (await res.json()) as T;
+}
+
+export async function apiNoBody(url: string, init?: RequestInit): Promise<void> {
+  const res = await fetch(url, init);
+  if (!res.ok) throw new Error(await res.text().catch(() => `HTTP ${res.status}`));
+}
+
+// ------------------------
+// datetime helpers
+// ------------------------
+export function isoToLocalInput(iso: string | null | undefined) {
+  if (!iso) return "";
+  const d = new Date(iso);
+  if (Number.isNaN(d.getTime())) return "";
+  const pad = (n: number) => String(n).padStart(2, "0");
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(
+    d.getMinutes()
+  )}`;
+}
+
+export function localInputToIso(v: string) {
+  if (!v) return null;
+  const d = new Date(v);
+  if (Number.isNaN(d.getTime())) return null;
+  return d.toISOString();
+}
+
+// ------------------------
+// Save orchestration
+// ------------------------
+export async function saveProjectAll(args: {
+  projectId: string;
+
+  // fields
   title: string;
   status: string;
   descriptionMd: string;
   yarnPlan: string;
-  startedAt: string | null;
-  finishedAt: string | null;
-}>;
+  startedAtLocal: string;
+  finishedAtLocal: string;
 
-export type UpsertCoverInput = {
-  projectId: string;
-  coverPhotoId: string | null;
-  uri: string;
-  caption?: string;
-  alt?: string;
-};
+  // tags
+  initialTagIds: string[];
+  tagIds: string[];
 
-export type AddGalleryPhotoInput = {
-  projectId: string;
-  uri: string;
-  caption?: string;
-  alt?: string;
-};
+  // photos
+  photoState: PhotoDraftState;
+}) {
+  const {
+    projectId,
+    title,
+    status,
+    descriptionMd,
+    yarnPlan,
+    startedAtLocal,
+    finishedAtLocal,
+    initialTagIds,
+    tagIds,
+    photoState,
+  } = args;
 
-async function readErr(res: Response) {
-  const t = await res.text().catch(() => "");
-  throw new Error(t || `Request failed (${res.status})`);
-}
-
-export async function patchProject(projectId: string, input: PatchProjectInput) {
-  const res = await fetch(`/api/projects/${projectId}`, {
+  // 1) PATCH project fields
+  await apiJson(`/api/projects/${projectId}`, {
     method: "PATCH",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(input),
-  });
-  if (!res.ok) await readErr(res);
-}
-
-export async function archiveProject(projectId: string) {
-  const res = await fetch(`/api/projects/${projectId}/archive`, { method: "POST" });
-  if (!res.ok) await readErr(res);
-}
-
-export async function unarchiveProject(projectId: string) {
-  const res = await fetch(`/api/projects/${projectId}/unarchive`, { method: "POST" });
-  if (!res.ok) await readErr(res);
-}
-
-export async function addProjectTag(projectId: string, tagId: string) {
-  const res = await fetch(`/api/projects/${projectId}/tags`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ tagId }),
-  });
-  if (!res.ok) await readErr(res);
-}
-
-export async function removeProjectTag(projectId: string, tagId: string) {
-  const res = await fetch(`/api/projects/${projectId}/tags/${tagId}`, { method: "DELETE" });
-  if (!res.ok) await readErr(res);
-}
-
-export async function upsertCoverPhoto(input: UpsertCoverInput) {
-  const uri = input.uri.trim();
-  if (!uri) return;
-
-  const payload = {
-    uri,
-    caption: input.caption ?? "",
-    ...(input.alt?.trim() ? { alt: input.alt.trim() } : {}),
-    role: "COVER",
-  };
-
-  // replace existing cover
-  if (input.coverPhotoId) {
-    const res = await fetch(`/api/photos/${input.coverPhotoId}`, {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload),
-    });
-    if (!res.ok) await readErr(res);
-    return;
-  }
-
-  // create cover
-  const res = await fetch(`/api/projects/${input.projectId}/photos`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(payload),
-  });
-  if (!res.ok) await readErr(res);
-}
-
-export async function addGalleryPhoto(input: AddGalleryPhotoInput) {
-  const uri = input.uri.trim();
-  if (!uri) throw new Error("Photo URL is required");
-
-  const res = await fetch(`/api/projects/${input.projectId}/photos`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
-      uri,
-      caption: input.caption ?? "",
-      ...(input.alt?.trim() ? { alt: input.alt.trim() } : {}),
-      role: "GALLERY",
+      title,
+      status,
+      descriptionMd,
+      yarnPlan,
+      startedAt: localInputToIso(startedAtLocal),
+      finishedAt: localInputToIso(finishedAtLocal),
     }),
   });
 
-  if (!res.ok) await readErr(res);
+  // 2) tags diff
+  {
+    const prev = new Set(initialTagIds);
+    const next = new Set(tagIds);
+
+    const toAdd = tagIds.filter((id) => !prev.has(id));
+    const toRemove = initialTagIds.filter((id) => !next.has(id));
+
+    for (const id of toAdd) {
+      await apiJson(`/api/projects/${projectId}/tags`, {
+        method: "POST",
+        body: JSON.stringify({ tagId: id }),
+      });
+    }
+    for (const id of toRemove) {
+      await apiNoBody(`/api/projects/${projectId}/tags/${id}`, { method: "DELETE" });
+    }
+  }
+
+  // 3) photos
+  {
+    const coverIdNow = getCoverId(photoState);
+
+    // cover first
+    if (coverIdNow) {
+      const cover = photoState.byId[coverIdNow];
+      if (cover && !cover.deleted) {
+        if (cover.isTemp) {
+          await apiJson(`/api/projects/${projectId}/photos`, {
+            method: "POST",
+            body: JSON.stringify({
+              uri: cover.uri,
+              caption: cover.caption,
+              alt: cover.alt.trim() ? cover.alt : undefined,
+              role: "COVER",
+            }),
+          });
+        } else {
+          await apiJson(`/api/photos/${cover.id}`, {
+            method: "PATCH",
+            body: JSON.stringify({ role: "COVER" }),
+          });
+        }
+      }
+    }
+
+    // add temp gallery
+    for (const id of photoState.order) {
+      const p = photoState.byId[id];
+      if (!p || p.deleted) continue;
+      if (!p.isTemp) continue;
+      if (p.role !== "GALLERY") continue;
+
+      await apiJson(`/api/projects/${projectId}/photos`, {
+        method: "POST",
+        body: JSON.stringify({
+          uri: p.uri,
+          caption: p.caption,
+          alt: p.alt.trim() ? p.alt : undefined,
+          role: "GALLERY",
+        }),
+      });
+    }
+
+    // patch existing (fields + role)
+    for (const id of photoState.order) {
+      const p = photoState.byId[id];
+      if (!p || p.deleted) continue;
+      if (p.isTemp) continue;
+
+      const init = p.initial;
+      if (!init) continue;
+
+      const patch: any = {};
+      if (p.uri !== init.uri) patch.uri = p.uri;
+      if (p.caption !== init.caption) patch.caption = p.caption;
+
+      const altNow = p.alt.trim() ? p.alt : null;
+      const altInit = init.alt.trim() ? init.alt : null;
+      if (altNow !== altInit) patch.alt = altNow;
+
+      if (p.sortOrder !== init.sortOrder) patch.sortOrder = p.sortOrder;
+      if (p.role !== init.role) patch.role = p.role;
+
+      if (Object.keys(patch).length) {
+        await apiJson(`/api/photos/${p.id}`, {
+          method: "PATCH",
+          body: JSON.stringify(patch),
+        });
+      }
+    }
+
+    // delete existing marked
+    for (const id of photoState.order) {
+      const p = photoState.byId[id];
+      if (!p || p.isTemp) continue;
+      if (!p.deleted) continue;
+      await apiNoBody(`/api/photos/${p.id}`, { method: "DELETE" });
+    }
+  }
 }
 
-export async function deletePhoto(photoId: string) {
-  const res = await fetch(`/api/photos/${photoId}`, { method: "DELETE" });
-  if (!res.ok) await readErr(res);
+export async function toggleArchive(projectId: string, isArchived: boolean) {
+  if (isArchived) await apiNoBody(`/api/projects/${projectId}/unarchive`, { method: "POST" });
+  else await apiNoBody(`/api/projects/${projectId}/archive`, { method: "POST" });
 }

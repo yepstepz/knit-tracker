@@ -1,5 +1,5 @@
 export function fmtDate(d: string | null | undefined) {
-  if (!d) return "—";
+  if (!d) return null;
   const dt = new Date(d);
   return Number.isNaN(dt.getTime()) ? "—" : dt.toLocaleDateString();
 }
