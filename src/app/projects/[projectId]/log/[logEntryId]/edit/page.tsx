@@ -1,11 +1,9 @@
 import { notFound } from "next/navigation";
-import { apiGet } from "@/app/_lib/serverFetch";
+import { apiGet } from "@/app/_lib/request";
 import type { LogEntry, ProjectDetail } from "@/types";
 import { LogEntryFormClient } from "@/app/_components/Form/log/LogEntryFormClient";
 
-export default async function EditLogEntryPage({
-                                                 params,
-                                               }: {
+export default async function EditLogEntryPage({ params }: {
   params: Promise<{ projectId: string; logEntryId: string }>;
 }) {
   const { projectId, logEntryId } = await params;

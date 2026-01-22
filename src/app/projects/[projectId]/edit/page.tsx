@@ -1,4 +1,4 @@
-import { apiGet } from "@/app/_lib/serverFetch";
+import { apiGet } from "@/app/_lib/request";
 import EditProjectClient from "./edit-project-client";
 import type { Photo } from "@/app/_components/Form/photos/types";
 

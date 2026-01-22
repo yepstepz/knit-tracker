@@ -17,6 +17,7 @@ import {
   Title,
 } from "@mantine/core";
 import { IconArrowLeft, IconCheck, IconPhoto, IconTrash } from "@tabler/icons-react";
+import {apiDelete, apiPatch, apiPostWithResponse} from "@/app/_lib/request";
 
 type LogPhoto = {
   id: string;
@@ -26,20 +27,6 @@ type LogPhoto = {
   sortOrder?: number | null;
   role?: string;
 };
-
-async function apiJson<T>(url: string, init?: RequestInit): Promise<T> {
-  const res = await fetch(url, {
-    ...init,
-    headers: { "Content-Type": "application/json", ...(init?.headers ?? {}) },
-  });
-  if (!res.ok) throw new Error(await res.text().catch(() => `HTTP ${res.status}`));
-  return (await res.json()) as T;
-}
-
-async function apiNoBody(url: string, init?: RequestInit): Promise<void> {
-  const res = await fetch(url, init);
-  if (!res.ok) throw new Error(await res.text().catch(() => `HTTP ${res.status}`));
-}
 
 function isoToLocalInput(iso: string | null | undefined) {
   if (!iso) return "";
@@ -132,23 +119,15 @@ export function LogEntryFormClient(props: {
         props.mode.kind === "edit" ? props.mode.logEntryId : "";
 
       if (props.mode.kind === "create") {
-        const created = await apiJson<{ id: string }>(`/api/projects/${projectId}/log`, {
-          method: "POST",
-          body: JSON.stringify({
-            title: title.trim() || "Untitled log",
-            contentMd,
-            happenedAt: localInputToIso(happenedAtLocal),
-          }),
-        });
-        logEntryId = created.id;
+        const { id: logEntryId } = await apiPostWithResponse<{ id: string }>(
+          `/api/projects/${projectId}/log`,
+          { title: title.trim() || "Untitled log", contentMd, happenedAt: localInputToIso(happenedAtLocal) }
+        );
       } else {
-        await apiJson(`/api/projects/${projectId}/log/${logEntryId}`, {
-          method: "PATCH",
-          body: JSON.stringify({
-            title,
-            contentMd,
-            happenedAt: localInputToIso(happenedAtLocal),
-          }),
+        await apiPatch(`/api/projects/${projectId}/log/${logEntryId}`, {
+          title,
+          contentMd,
+          happenedAt: localInputToIso(happenedAtLocal),
         });
       }
 
@@ -157,7 +136,7 @@ export function LogEntryFormClient(props: {
         const pid = initial.photo!.id;
 
         if (photoDeleted) {
-          await apiNoBody(`/api/photos/${pid}`, { method: "DELETE" });
+          await apiDelete(`/api/photos/${pid}`);
         } else {
           const patch: any = {};
           if (photoEdit.uri !== (initial.photo!.uri ?? "")) patch.uri = photoEdit.uri;
@@ -168,21 +147,15 @@ export function LogEntryFormClient(props: {
           if (altNow !== altInit) patch.alt = altNow;
 
           if (Object.keys(patch).length) {
-            await apiJson(`/api/photos/${pid}`, {
-              method: "PATCH",
-              body: JSON.stringify(patch),
-            });
+            await apiPatch(`/api/photos/${pid}`, patch);
           }
         }
       } else if (canStageNewPhoto) {
-        await apiJson(`/api/projects/${projectId}/log/${logEntryId}/photos`, {
-          method: "POST",
-          body: JSON.stringify({
-            uri: newPhoto.uri.trim(),
-            caption: newPhoto.caption.trim(),
-            alt: newPhoto.alt.trim() ? newPhoto.alt : undefined,
-            role: "GALLERY",
-          }),
+        await apiPost(`/api/projects/${projectId}/log/${logEntryId}/photos`, {
+          uri: newPhoto.uri.trim(),
+          caption: newPhoto.caption.trim(),
+          alt: newPhoto.alt.trim() ? newPhoto.alt : undefined,
+          role: "GALLERY",
         });
       }
 

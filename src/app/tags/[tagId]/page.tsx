@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation";
-import { apiGet } from "@/app/_lib/serverFetch";
+import { apiGet } from "@/app/_lib/request";
 import { qs } from "@/app/_lib/qs";
 import type { Tag, Paginated, ProjectDetail } from "@/types";
 import TagPageClient from "./tag-page-client";

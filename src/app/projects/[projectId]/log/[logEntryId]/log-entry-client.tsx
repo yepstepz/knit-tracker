@@ -13,19 +13,19 @@ import {
   Text,
   Title,
 } from "@mantine/core";
-import { IconArrowLeft, IconEdit, IconTrash } from "@tabler/icons-react";
+import {IconArrowLeft, IconEdit, IconTrash} from "@tabler/icons-react";
 
-import { DeleteLogEntryButton } from "@/app/_components/Form/log/DeleteLogEntryButton";
-import type { LogEntry } from "@/types";
+import {DeleteLogEntryButton} from "@/app/_components/Form/log/DeleteLogEntryButton";
+import type {LogEntry} from "@/types";
 
 export default function LogEntryClient({
-                                         projectId,
-                                         logEntryId,
-                                         projectTitle,
-                                         entry,
-                                         happenedAtLabel,
-                                         redirectTo,
-                                       }: {
+   projectId,
+   logEntryId,
+   projectTitle,
+   entry,
+   happenedAtLabel,
+   redirectTo,
+}: {
   projectId: string;
   logEntryId: string;
   projectTitle: string;
@@ -39,13 +39,13 @@ export default function LogEntryClient({
         {/* Top links */}
         <Group justify="space-between" align="center" wrap="wrap" gap="md">
           <Group gap="md" wrap="wrap">
-            <Link href={`/projects/${projectId}`} style={{ textDecoration: "none" }}>
-              <Button variant="subtle" leftSection={<IconArrowLeft size={16} />}>
+            <Link href={`/projects/${projectId}`} style={{textDecoration: "none"}}>
+              <Button variant="subtle" leftSection={<IconArrowLeft size={16}/>}>
                 Project
               </Button>
             </Link>
 
-            <Link href={`/projects/${projectId}/log?page=1`} style={{ textDecoration: "none" }}>
+            <Link href={`/projects/${projectId}/log?page=1`} style={{textDecoration: "none"}}>
               <Button variant="subtle">All logs</Button>
             </Link>
           </Group>
@@ -60,7 +60,7 @@ export default function LogEntryClient({
           <Stack gap="md">
             <Group justify="space-between" align="flex-start" wrap="wrap" gap="sm">
               <Title order={2}>{entry.title}</Title>
-              <Text c="dimmed" style={{ whiteSpace: "nowrap" }}>
+              <Text c="dimmed" style={{whiteSpace: "nowrap"}}>
                 {happenedAtLabel}
               </Text>
             </Group>
@@ -84,10 +84,10 @@ export default function LogEntryClient({
               </Card>
             ) : null}
 
-            <Divider />
+            <Divider/>
 
             {entry.contentMd?.trim() ? (
-              <Text style={{ whiteSpace: "pre-wrap" }}>{entry.contentMd}</Text>
+              <Text style={{whiteSpace: "pre-wrap"}}>{entry.contentMd}</Text>
             ) : (
               <Text c="dimmed">No text</Text>
             )}
@@ -98,9 +98,9 @@ export default function LogEntryClient({
         <Group justify="space-between" align="center" wrap="wrap">
           <Link
             href={`/projects/${projectId}/log/${logEntryId}/edit`}
-            style={{ textDecoration: "none" }}
+            style={{textDecoration: "none"}}
           >
-            <Button variant="light" leftSection={<IconEdit size={16} />}>
+            <Button variant="light" leftSection={<IconEdit size={16}/>}>
               Edit log
             </Button>
           </Link>

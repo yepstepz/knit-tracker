@@ -1,4 +1,4 @@
-import { apiGet } from "@/app/_lib/serverFetch";
+import { apiGet } from "@/app/_lib/request";
 import { qs } from "@/app/_lib/qs";
 import { fmtDate, markdownPreview } from "@/app/_lib/format";
 import type { LogEntry, Paginated, ProjectDetail } from "@/types";

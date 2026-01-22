@@ -1,4 +1,4 @@
-import { apiGet } from "./_lib/serverFetch";
+import { apiGet } from "@/app/_lib/request";
 import { qs } from "./_lib/qs";
 import { Paginated, ProjectListItem, Tag } from "@/types";
 import { HomeClient } from './home-client';

@@ -1,6 +1,6 @@
 import Link from "next/link";
 import {
-  Badge,
+  Badge, Box,
   Card,
   Group,
   Image,
@@ -88,16 +88,18 @@ export function ProjectCard({ p }: { p: ProjectCardModel }) {
 
         <Stack gap={8} mt="sm">
           <Group justify="space-between" align="flex-start" gap="xs">
-            <Text fw={700} lineClamp={2}>
-              {p.title}
-            </Text>
+            <Box w={140}>
+              <Text fw={700} lineClamp={2} truncate="end">
+                {p.title}
+              </Text>
+            </Box>
 
             <Badge variant="outline" radius="sm">
               {p.status}
             </Badge>
           </Group>
 
-          <Text c="dimmed" size="sm" lineClamp={3}>
+          <Text c="dimmed" size="sm" lineClamp={3} truncate="end">
             {desc || "No description"}
           </Text>
 

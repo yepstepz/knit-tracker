@@ -1,14 +1,14 @@
-import { apiGet } from "../../_lib/serverFetch";
-import type { ProjectDetail } from "@/types";
-import { ProjectPageClient } from "./project-page-client";
-import { fmtDate } from "../../_lib/format";
+import {apiGet} from "@/app/_lib/request";
+import type {ProjectDetail} from "@/types";
+import {ProjectPageClient} from "./project-page-client";
+import {fmtDate} from "../../_lib/format";
 
 export default async function ProjectPage({
                                             params,
                                           }: {
   params: Promise<{ projectId: string }>;
 }) {
-  const { projectId } = await params;
+  const {projectId} = await params;
 
   const projectApi = await apiGet<ProjectDetail>(`/api/projects/${projectId}`);
 
@@ -30,5 +30,5 @@ export default async function ProjectPage({
     logEntries: logs
   }
 
-  return <ProjectPageClient projectId={projectId} project={project} />;
+  return <ProjectPageClient projectId={projectId} project={project}/>;
 }

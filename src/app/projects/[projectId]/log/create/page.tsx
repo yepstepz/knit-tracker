@@ -1,4 +1,4 @@
-import { apiGet } from "@/app/_lib/serverFetch";
+import { apiGet } from "@/app/_lib/request";
 import type { ProjectDetail } from "@/types";
 import { LogEntryFormClient } from "@/app/_components/Form/log/LogEntryFormClient";
 

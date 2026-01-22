@@ -3,11 +3,7 @@
 import { Button } from "@mantine/core";
 import { modals } from "@mantine/modals";
 import { IconTrash } from "@tabler/icons-react";
-
-async function apiNoBody(url: string, init?: RequestInit): Promise<void> {
-  const res = await fetch(url, init);
-  if (!res.ok) throw new Error(await res.text().catch(() => `HTTP ${res.status}`));
-}
+import {apiDelete} from "@/app/_lib/request";
 
 export function DeleteLogEntryButton({
                                        projectId,
@@ -28,7 +24,7 @@ export function DeleteLogEntryButton({
       confirmProps: { color: "red" },
       centered: true,
       onConfirm: async () => {
-        await apiNoBody(`/api/projects/${projectId}/log/${logEntryId}`, { method: "DELETE" });
+        await apiDelete(`/api/projects/${projectId}/log/${logEntryId}`);
         window.location.href = redirectTo;
       },
     });
