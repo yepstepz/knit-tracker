@@ -1,11 +1,11 @@
-import "server-only";
-import { prisma } from "@/lib/prisma";
-import { created, badRequest } from "@/server/helpers/http";
-import { parseCreatePhotoInput } from "@/server/helpers/photo";
-import { PhotoRole } from "@prisma/client";
+import 'server-only';
+import { prisma } from '@/lib/prisma';
+import { created, badRequest } from '@/server/helpers/http';
+import { parseCreatePhotoInput } from '@/server/helpers/photo';
+import { PhotoRole } from '@prisma/client';
 
 export async function addProjectPhoto(projectId: string, body: unknown) {
-  if (!projectId) return badRequest("[projectId] required");
+  if (!projectId) return badRequest('[projectId] required');
 
   const parsed = await parseCreatePhotoInput(body, {
     orderScope: { projectId },

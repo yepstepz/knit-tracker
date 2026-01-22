@@ -1,18 +1,18 @@
-"use client";
+'use client';
 
-import { useMemo, useState } from "react";
-import type { Photo, PhotoDraftState } from "./types";
-import { addTempPhoto, buildPhotoDraft, getCoverId, removeTemp, setCover } from "./utils";
+import { useMemo, useState } from 'react';
+import type { Photo, PhotoDraftState } from './types';
+import { addTempPhoto, buildPhotoDraft, getCoverId, removeTemp, setCover } from './utils';
 
 export function usePhotoDraft(initialPhotos: Photo[]) {
   const [state, setState] = useState<PhotoDraftState>(() => buildPhotoDraft(initialPhotos));
 
   const coverId = useMemo(() => getCoverId(state), [state]);
-  const cover = useMemo(() => (coverId ? state.byId[coverId] ?? null : null), [state, coverId]);
+  const cover = useMemo(() => (coverId ? (state.byId[coverId] ?? null) : null), [state, coverId]);
 
   const update = (
     id: string,
-    patch: Partial<{ uri: string; caption: string; alt: string; sortOrder: number }>
+    patch: Partial<{ uri: string; caption: string; alt: string; sortOrder: number }>,
   ) => {
     setState((prev) => {
       const next = structuredClone(prev);
@@ -63,7 +63,7 @@ export function usePhotoDraft(initialPhotos: Photo[]) {
 
     setState((prev) => {
       const next = structuredClone(prev);
-      addTempPhoto(next, { uri, caption, alt: input.alt, role: "GALLERY", sortOrder: 0 });
+      addTempPhoto(next, { uri, caption, alt: input.alt, role: 'GALLERY', sortOrder: 0 });
       return next;
     });
 
@@ -77,7 +77,7 @@ export function usePhotoDraft(initialPhotos: Photo[]) {
 
     setState((prev) => {
       const next = structuredClone(prev);
-      const id = addTempPhoto(next, { uri, caption, alt: input.alt, role: "COVER", sortOrder: 0 });
+      const id = addTempPhoto(next, { uri, caption, alt: input.alt, role: 'COVER', sortOrder: 0 });
       setCover(next, id);
       return next;
     });

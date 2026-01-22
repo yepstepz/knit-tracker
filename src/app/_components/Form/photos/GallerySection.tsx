@@ -1,26 +1,29 @@
-"use client";
+'use client';
 
-import { Button, Grid, GridCol, Group, Stack, Text, TextInput } from "@mantine/core";
-import { FormSection } from "../shared/FormSection";
-import type { PhotoDraftState } from "./types";
-import { PhotoCardEditor } from "./PhotoCardEditor";
+import { Button, Grid, GridCol, Group, Stack, Text, TextInput } from '@mantine/core';
+import { FormSection } from '../shared/FormSection';
+import type { PhotoDraftState } from './types';
+import { PhotoCardEditor } from './PhotoCardEditor';
 
 export function GallerySection({
-                                 state,
-                                 coverId,
-                                 addDraft,
-                                 updateDraft,
-                                 setCoverId,
-                                 toggleDeleteExisting,
-                                 removeTemp,
-                                 addNewDraftForm,
-                                 setAddNewDraftForm,
-                               }: {
+  state,
+  coverId,
+  addDraft,
+  updateDraft,
+  setCoverId,
+  toggleDeleteExisting,
+  removeTemp,
+  addNewDraftForm,
+  setAddNewDraftForm,
+}: {
   state: PhotoDraftState;
   coverId: string | null;
 
   addDraft: (input: { uri: string; caption: string; alt: string }) => void;
-  updateDraft: (id: string, patch: Partial<{ uri: string; caption: string; alt: string; sortOrder: number }>) => void;
+  updateDraft: (
+    id: string,
+    patch: Partial<{ uri: string; caption: string; alt: string; sortOrder: number }>,
+  ) => void;
   setCoverId: (id: string) => void;
   toggleDeleteExisting: (id: string) => void;
   removeTemp: (id: string) => void;
@@ -30,33 +33,33 @@ export function GallerySection({
 }) {
   const ids = state.order.filter((id) => {
     const p = state.byId[id];
-    return !!p && p.role === "GALLERY";
+    return !!p && p.role === 'GALLERY';
   });
 
   const canAdd = !!addNewDraftForm.uri.trim() && !!addNewDraftForm.caption.trim();
 
   return (
-    <FormSection title="Gallery">
-      <Stack gap="sm">
+    <FormSection title='Gallery'>
+      <Stack gap='sm'>
         <TextInput
-          label="New photo URI"
+          label='New photo URI'
           value={addNewDraftForm.uri}
           onChange={(e) => setAddNewDraftForm({ uri: e.currentTarget.value })}
         />
         <TextInput
-          label="Caption"
+          label='Caption'
           value={addNewDraftForm.caption}
           onChange={(e) => setAddNewDraftForm({ caption: e.currentTarget.value })}
         />
         <TextInput
-          label="Alt (optional)"
+          label='Alt (optional)'
           value={addNewDraftForm.alt}
           onChange={(e) => setAddNewDraftForm({ alt: e.currentTarget.value })}
         />
 
-        <Group justify="flex-end">
+        <Group justify='flex-end'>
           <Button
-            variant="light"
+            variant='light'
             disabled={!canAdd}
             onClick={() => {
               addDraft(addNewDraftForm);
@@ -66,12 +69,12 @@ export function GallerySection({
           </Button>
         </Group>
 
-        <Text size="xs" c="dimmed">
+        <Text size='xs' c='dimmed'>
           Nothing is sent to API until Save.
         </Text>
       </Stack>
 
-      <Grid gutter="md">
+      <Grid gutter='md'>
         {ids.map((id) => {
           const p = state.byId[id]!;
           return (
@@ -89,7 +92,7 @@ export function GallerySection({
         })}
       </Grid>
 
-      {!ids.length ? <Text c="dimmed">No gallery photos in draft.</Text> : null}
+      {!ids.length ? <Text c='dimmed'>No gallery photos in draft.</Text> : null}
     </FormSection>
   );
 }

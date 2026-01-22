@@ -1,6 +1,6 @@
-import { apiGet } from "@/app/_lib/request";
-import EditProjectClient from "./edit-project-client";
-import type { Photo } from "@/app/_components/Form/photos/types";
+import { apiGet } from '@/app/_lib/request';
+import EditProjectClient from './edit-project-client';
+import type { Photo } from '@/app/_components/Form/photos/types';
 
 type Tag = { id: string; name: string; color?: string | null };
 
@@ -17,8 +17,8 @@ type ProjectDetail = {
 };
 
 export default async function EditProjectPage({
-                                                params,
-                                              }: {
+  params,
+}: {
   params: Promise<{ projectId: string }>;
 }) {
   const { projectId } = await params;
@@ -29,5 +29,7 @@ export default async function EditProjectPage({
     apiGet<Photo[]>(`/api/projects/${projectId}/photos`),
   ]);
 
-  return <EditProjectClient projectId={projectId} project={project} allTags={allTags} photos={photos} />;
+  return (
+    <EditProjectClient projectId={projectId} project={project} allTags={allTags} photos={photos} />
+  );
 }

@@ -1,13 +1,10 @@
-import "server-only";
-import { prisma } from "@/lib/prisma";
-import { ok, badRequest, notFound } from "@/server/helpers/http";
+import 'server-only';
+import { prisma } from '@/lib/prisma';
+import { ok, badRequest, notFound } from '@/server/helpers/http';
 
-export async function POST(
-  _req: Request,
-  ctx: { params: Promise<{ projectId: string }> }
-) {
+export async function POST(_req: Request, ctx: { params: Promise<{ projectId: string }> }) {
   const { projectId } = await ctx.params;
-  if (!projectId) return badRequest("[projectId] required");
+  if (!projectId) return badRequest('[projectId] required');
 
   try {
     await prisma.project.update({
@@ -16,6 +13,6 @@ export async function POST(
     });
     return ok({ ok: true });
   } catch {
-    return notFound("project not found");
+    return notFound('project not found');
   }
 }

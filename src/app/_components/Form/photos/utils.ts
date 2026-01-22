@@ -1,18 +1,18 @@
-import type { Photo, DraftPhoto, PhotoDraftState, PhotoRole } from "./types";
+import type { Photo, DraftPhoto, PhotoDraftState, PhotoRole } from './types';
 
 export function makeTempId() {
   // браузер
   // @ts-ignore
-  if (typeof crypto !== "undefined" && crypto.randomUUID) return `tmp_${crypto.randomUUID()}`;
+  if (typeof crypto !== 'undefined' && crypto.randomUUID) return `tmp_${crypto.randomUUID()}`;
   return `tmp_${Math.random().toString(16).slice(2)}_${Date.now()}`;
 }
 
 export function toAltString(v?: string | null) {
-  return v ?? "";
+  return v ?? '';
 }
 
 export function toSortOrder(v?: number | null) {
-  return typeof v === "number" && !Number.isNaN(v) ? v : 0;
+  return typeof v === 'number' && !Number.isNaN(v) ? v : 0;
 }
 
 export function buildPhotoDraft(photos: Photo[]): PhotoDraftState {
@@ -48,7 +48,7 @@ export function getCoverId(state: PhotoDraftState): string | null {
     const p = state.byId[id];
     if (!p) continue;
     if (p.deleted) continue;
-    if (p.role === "COVER") return id;
+    if (p.role === 'COVER') return id;
   }
   return null;
 }
@@ -58,13 +58,13 @@ export function setCover(state: PhotoDraftState, coverId: string) {
   for (const id of state.order) {
     const p = state.byId[id];
     if (!p || p.deleted) continue;
-    p.role = id === coverId ? "COVER" : "GALLERY";
+    p.role = id === coverId ? 'COVER' : 'GALLERY';
   }
 }
 
 export function addTempPhoto(
   state: PhotoDraftState,
-  photo: { uri: string; caption: string; alt?: string; role: PhotoRole; sortOrder?: number }
+  photo: { uri: string; caption: string; alt?: string; role: PhotoRole; sortOrder?: number },
 ): string {
   const id = makeTempId();
   state.byId[id] = {
@@ -72,7 +72,7 @@ export function addTempPhoto(
     isTemp: true,
     uri: photo.uri,
     caption: photo.caption,
-    alt: photo.alt ?? "",
+    alt: photo.alt ?? '',
     role: photo.role,
     sortOrder: photo.sortOrder ?? 0,
   };

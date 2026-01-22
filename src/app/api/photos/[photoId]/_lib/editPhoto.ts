@@ -1,8 +1,8 @@
-import "server-only";
-import { prisma } from "@/lib/prisma";
-import { ok, badRequest, notFound } from "@/server/helpers/http";
-import { isPhotoRole } from "@/server/helpers/photo";
-import { PhotoRole } from "@prisma/client";
+import 'server-only';
+import { prisma } from '@/lib/prisma';
+import { ok, badRequest, notFound } from '@/server/helpers/http';
+import { isPhotoRole } from '@/server/helpers/photo';
+import { PhotoRole } from '@prisma/client';
 
 type Body = Partial<{
   uri: string;
@@ -13,50 +13,50 @@ type Body = Partial<{
 }>;
 
 export async function editPhoto(photoId: string, body: unknown) {
-  if (!photoId) return badRequest("photoId required");
-  if (!body || typeof body !== "object") return badRequest("invalid json");
+  if (!photoId) return badRequest('photoId required');
+  if (!body || typeof body !== 'object') return badRequest('invalid json');
 
   const b = body as Body;
   const data: any = {};
 
-  if ("uri" in b) {
-    const uri = typeof b.uri === "string" ? b.uri.trim() : "";
-    if (!uri) return badRequest("uri must be non-empty");
+  if ('uri' in b) {
+    const uri = typeof b.uri === 'string' ? b.uri.trim() : '';
+    if (!uri) return badRequest('uri must be non-empty');
     data.uri = uri;
   }
 
-  if ("caption" in b) {
-    if (b.caption !== null && typeof b.caption !== "string") {
-      return badRequest("caption must be string or null");
+  if ('caption' in b) {
+    if (b.caption !== null && typeof b.caption !== 'string') {
+      return badRequest('caption must be string or null');
     }
     data.caption = b.caption;
   }
 
-  if ("alt" in b) {
-    if (b.alt !== null && typeof b.alt !== "string") {
-      return badRequest("alt must be string or null");
+  if ('alt' in b) {
+    if (b.alt !== null && typeof b.alt !== 'string') {
+      return badRequest('alt must be string or null');
     }
     data.alt = b.alt;
   }
 
   let wantsCover = false;
-  if ("role" in b) {
-    if (typeof b.role !== "string" || !isPhotoRole(b.role)) {
-      return badRequest("role must be a valid PhotoRole");
+  if ('role' in b) {
+    if (typeof b.role !== 'string' || !isPhotoRole(b.role)) {
+      return badRequest('role must be a valid PhotoRole');
     }
     data.role = b.role as PhotoRole;
     wantsCover = data.role === PhotoRole.COVER;
   }
 
-  if ("sortOrder" in b) {
-    if (typeof b.sortOrder !== "number" || !Number.isFinite(b.sortOrder)) {
-      return badRequest("sortOrder must be number");
+  if ('sortOrder' in b) {
+    if (typeof b.sortOrder !== 'number' || !Number.isFinite(b.sortOrder)) {
+      return badRequest('sortOrder must be number');
     }
     data.sortOrder = Math.trunc(b.sortOrder);
   }
 
   if (Object.keys(data).length === 0) {
-    return badRequest("no fields to update");
+    return badRequest('no fields to update');
   }
 
   const result = await prisma.$transaction(async (tx) => {

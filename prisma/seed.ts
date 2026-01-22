@@ -1,5 +1,5 @@
-import { PrismaClient, ProjectStatus, PhotoRole } from "@prisma/client";
-import { PrismaPg } from "@prisma/adapter-pg";
+import { PrismaClient, ProjectStatus, PhotoRole } from '@prisma/client';
+import { PrismaPg } from '@prisma/adapter-pg';
 
 const prisma = new PrismaClient({
   adapter: new PrismaPg({ connectionString: process.env.DATABASE_URL! }),
@@ -7,27 +7,26 @@ const prisma = new PrismaClient({
 
 function assertSafeToSeed() {
   const env = process.env.NODE_ENV;
-  const url = process.env.DATABASE_URL ?? "";
+  const url = process.env.DATABASE_URL ?? '';
 
-  if (env === "production") {
-    throw new Error("Refusing to run seed in production (NODE_ENV=production).");
+  if (env === 'production') {
+    throw new Error('Refusing to run seed in production (NODE_ENV=production).');
   }
 
-  let host = "";
+  let host = '';
   try {
     host = new URL(url).hostname;
   } catch {
-    host = "";
+    host = '';
   }
 
-  if (!["localhost", "127.0.0.1"].includes(host)) {
+  if (!['localhost', '127.0.0.1'].includes(host)) {
     throw new Error(`Refusing to run seed for non-local DB host: ${host}`);
   }
 }
 
 // 1x1 прозрачный gif — никаких сетевых запросов
-const PLACEHOLDER_URI =
-  "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw==";
+const PLACEHOLDER_URI = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw==';
 
 function daysAgo(n: number) {
   return new Date(Date.now() - n * 24 * 60 * 60 * 1000);
@@ -46,32 +45,32 @@ async function main() {
 
   // --- Tags (upsert by name) ---
   const tagSweater = await prisma.tag.upsert({
-    where: { name: "свитер" },
-    create: { name: "свитер", color: "#9BB7A5" },
+    where: { name: 'свитер' },
+    create: { name: 'свитер', color: '#9BB7A5' },
     update: {},
   });
 
   const tagGift = await prisma.tag.upsert({
-    where: { name: "подарок" },
-    create: { name: "подарок", color: "#C9A38B" },
+    where: { name: 'подарок' },
+    create: { name: 'подарок', color: '#C9A38B' },
     update: {},
   });
 
   const tagRepeat = await prisma.tag.upsert({
-    where: { name: "повтор" },
-    create: { name: "повтор", color: "#B9B6E7" },
+    where: { name: 'повтор' },
+    create: { name: 'повтор', color: '#B9B6E7' },
     update: {},
   });
 
   const tagSummer = await prisma.tag.upsert({
-    where: { name: "лето" },
-    create: { name: "лето", color: "#E8D7A8" },
+    where: { name: 'лето' },
+    create: { name: 'лето', color: '#E8D7A8' },
     update: {},
   });
 
   const tagQuick = await prisma.tag.upsert({
-    where: { name: "быстро" },
-    create: { name: "быстро", color: "#89A7C2" },
+    where: { name: 'быстро' },
+    create: { name: 'быстро', color: '#89A7C2' },
     update: {},
   });
 
@@ -83,7 +82,7 @@ async function main() {
   for (let i = 1; i <= 18; i++) {
     const status = pick(
       [ProjectStatus.IDEA, ProjectStatus.ACTIVE, ProjectStatus.PAUSED, ProjectStatus.FINISHED],
-      i
+      i,
     );
 
     const archivedAt = i % 9 === 0 ? daysAgo(3) : null;
@@ -106,37 +105,37 @@ async function main() {
     const projectPhotos =
       i % 4 === 0
         ? [
-          {
-            uri: PLACEHOLDER_URI,
-            caption: `Cover #${i}`,
-            alt: `Cover #${i}`,
-            role: PhotoRole.COVER,
-            sortOrder: 1,
-          },
-          {
-            uri: PLACEHOLDER_URI,
-            caption: `Gallery A #${i}`,
-            alt: `Gallery A #${i}`,
-            role: PhotoRole.GALLERY,
-            sortOrder: 2,
-          },
-          {
-            uri: PLACEHOLDER_URI,
-            caption: `Gallery B #${i}`,
-            alt: `Gallery B #${i}`,
-            role: PhotoRole.GALLERY,
-            sortOrder: 3,
-          },
-        ]
+            {
+              uri: PLACEHOLDER_URI,
+              caption: `Cover #${i}`,
+              alt: `Cover #${i}`,
+              role: PhotoRole.COVER,
+              sortOrder: 1,
+            },
+            {
+              uri: PLACEHOLDER_URI,
+              caption: `Gallery A #${i}`,
+              alt: `Gallery A #${i}`,
+              role: PhotoRole.GALLERY,
+              sortOrder: 2,
+            },
+            {
+              uri: PLACEHOLDER_URI,
+              caption: `Gallery B #${i}`,
+              alt: `Gallery B #${i}`,
+              role: PhotoRole.GALLERY,
+              sortOrder: 3,
+            },
+          ]
         : [
-          {
-            uri: PLACEHOLDER_URI,
-            caption: `Cover #${i}`,
-            alt: `Cover #${i}`,
-            role: PhotoRole.COVER,
-            sortOrder: 1,
-          },
-        ];
+            {
+              uri: PLACEHOLDER_URI,
+              caption: `Cover #${i}`,
+              alt: `Cover #${i}`,
+              role: PhotoRole.COVER,
+              sortOrder: 1,
+            },
+          ];
 
     const logsCount = 2 + (i % 3); // 2..4
     const logEntries = Array.from({ length: logsCount }).map((_, idx) => {
@@ -196,16 +195,16 @@ async function main() {
     createdProjects.push(project);
   }
 
-  console.log("✅ Seed done:", {
+  console.log('✅ Seed done:', {
     createdProjects: createdProjects.length,
     sampleIds: createdProjects.slice(0, 3).map((p) => p.id),
   });
 }
 
-console.log("Generating seed...");
+console.log('Generating seed...');
 main()
   .catch((e) => {
-    console.error("❌ Seed failed:", e);
+    console.error('❌ Seed failed:', e);
     process.exit(1);
   })
   .finally(async () => {

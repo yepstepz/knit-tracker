@@ -1,12 +1,12 @@
-import "server-only";
-import { prisma } from "@/lib/prisma";
-import { ok, badRequest, notFound } from "@/server/helpers/http";
-import { PhotoRole, Prisma } from "@prisma/client";
+import 'server-only';
+import { prisma } from '@/lib/prisma';
+import { ok, badRequest, notFound } from '@/server/helpers/http';
+import { PhotoRole, Prisma } from '@prisma/client';
 
 const LOG_PREVIEW_LIMIT = 5;
 
 export async function getProject(projectId: string) {
-  if (!projectId) return badRequest("[projectId] required");
+  if (!projectId) return badRequest('[projectId] required');
 
   const args = {
     where: { id: projectId },
@@ -15,10 +15,7 @@ export async function getProject(projectId: string) {
       photos: true,
 
       logEntries: {
-        orderBy: [
-          { happenedAt: "desc" },
-          { createdAt: "desc" },
-        ],
+        orderBy: [{ happenedAt: 'desc' }, { createdAt: 'desc' }],
         take: LOG_PREVIEW_LIMIT + 1,
         include: { photo: true },
       },
@@ -36,7 +33,7 @@ export async function getProject(projectId: string) {
       },
 
       derivedProjects: {
-        orderBy: { updatedAt: "desc" as const },
+        orderBy: { updatedAt: 'desc' as const },
         select: {
           id: true,
           title: true,
@@ -80,10 +77,10 @@ export async function getProject(projectId: string) {
 
     basedOn: project.basedOn
       ? {
-        ...project.basedOn,
-        tags: project.basedOn.tags.map((x) => x.tag),
-        cover: project.basedOn.photos[0] ?? null,
-      }
+          ...project.basedOn,
+          tags: project.basedOn.tags.map((x) => x.tag),
+          cover: project.basedOn.photos[0] ?? null,
+        }
       : null,
 
     derivedProjects: project.derivedProjects.map((p) => ({

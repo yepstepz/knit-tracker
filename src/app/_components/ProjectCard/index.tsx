@@ -1,13 +1,6 @@
-import Link from "next/link";
-import {
-  Badge, Box,
-  Card,
-  Group,
-  Image,
-  Stack,
-  Text,
-} from "@mantine/core";
-import { IconArchive, IconClock } from "@tabler/icons-react";
+import Link from 'next/link';
+import { Badge, Box, Card, Group, Image, Stack, Text } from '@mantine/core';
+import { IconArchive, IconClock } from '@tabler/icons-react';
 
 type Photo = { uri: string; alt?: string | null; caption?: string | null };
 
@@ -22,12 +15,12 @@ export type ProjectCardModel = {
 };
 
 function stripMd(md?: string | null) {
-  const s = (md ?? "").trim();
-  if (!s) return "";
+  const s = (md ?? '').trim();
+  if (!s) return '';
   return s
-    .replace(/\[([^\]]+)\]\([^)]+\)/g, "$1")
-    .replace(/[`*_>#-]/g, "")
-    .replace(/\s+/g, " ")
+    .replace(/\[([^\]]+)\]\([^)]+\)/g, '$1')
+    .replace(/[`*_>#-]/g, '')
+    .replace(/\s+/g, ' ')
     .trim();
 }
 
@@ -36,26 +29,26 @@ export function ProjectCard({ p }: { p: ProjectCardModel }) {
   const desc = stripMd(p.descriptionMd);
 
   return (
-    <Link href={href} style={{ textDecoration: "none", color: "inherit" }}>
-      <Card withBorder radius="lg" shadow="sm" style={{ position: "relative", overflow: "hidden" }}>
-        <Card.Section style={{ position: "relative" }}>
+    <Link href={href} style={{ textDecoration: 'none', color: 'inherit' }}>
+      <Card withBorder radius='lg' shadow='sm' style={{ position: 'relative', overflow: 'hidden' }}>
+        <Card.Section style={{ position: 'relative' }}>
           {p.cover?.uri ? (
             <Image
               src={p.cover.uri}
               alt={p.cover.alt ?? p.cover.caption ?? p.title}
               height={220}
-              fit="cover"
+              fit='cover'
             />
           ) : (
             <div
               style={{
                 height: 220,
-                display: "grid",
-                placeItems: "center",
-                background: "var(--mantine-color-gray-1)",
+                display: 'grid',
+                placeItems: 'center',
+                background: 'var(--mantine-color-gray-1)',
               }}
             >
-              <Text c="dimmed" size="sm">
+              <Text c='dimmed' size='sm'>
                 No cover
               </Text>
             </div>
@@ -64,21 +57,21 @@ export function ProjectCard({ p }: { p: ProjectCardModel }) {
           {p.archived && (
             <Badge
               leftSection={<IconArchive size={14} />}
-              radius="xl"
-              variant="light"
-              color="red"
+              radius='xl'
+              variant='light'
+              color='red'
               style={{
-                position: "absolute",
+                position: 'absolute',
                 top: 10,
                 right: 10,
                 zIndex: 1,
-                backgroundColor: "rgba(255, 0, 0, 0.12)",
-                border: "1px solid rgba(255, 0, 0, 0.25)",
-                backdropFilter: "blur(6px)",
-                WebkitBackdropFilter: "blur(6px)",
-                pointerEvents: "none",
+                backgroundColor: 'rgba(255, 0, 0, 0.12)',
+                border: '1px solid rgba(255, 0, 0, 0.25)',
+                backdropFilter: 'blur(6px)',
+                WebkitBackdropFilter: 'blur(6px)',
+                pointerEvents: 'none',
                 fontWeight: 700,
-                letterSpacing: "0.02em",
+                letterSpacing: '0.02em',
               }}
             >
               ARCHIVED
@@ -86,26 +79,26 @@ export function ProjectCard({ p }: { p: ProjectCardModel }) {
           )}
         </Card.Section>
 
-        <Stack gap={8} mt="sm">
-          <Group justify="space-between" align="flex-start" gap="xs">
+        <Stack gap={8} mt='sm'>
+          <Group justify='space-between' align='flex-start' gap='xs'>
             <Box w={140}>
-              <Text fw={700} lineClamp={2} truncate="end">
+              <Text fw={700} lineClamp={2} truncate='end'>
                 {p.title}
               </Text>
             </Box>
 
-            <Badge variant="outline" radius="sm">
+            <Badge variant='outline' radius='sm'>
               {p.status}
             </Badge>
           </Group>
 
-          <Text c="dimmed" size="sm" lineClamp={3} truncate="end">
-            {desc || "No description"}
+          <Text c='dimmed' size='sm' lineClamp={3} truncate='end'>
+            {desc || 'No description'}
           </Text>
 
-          <Group gap={6} mt={2} c="dimmed">
+          <Group gap={6} mt={2} c='dimmed'>
             <IconClock size={14} />
-            <Text size="xs">Updated: {p.updatedAt}</Text>
+            <Text size='xs'>Updated: {p.updatedAt}</Text>
           </Group>
         </Stack>
       </Card>

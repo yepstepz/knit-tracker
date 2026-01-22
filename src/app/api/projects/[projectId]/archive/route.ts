@@ -1,10 +1,7 @@
-import { prisma } from "@/lib/prisma";
-import { ok } from "@/server/helpers/http";
+import { prisma } from '@/lib/prisma';
+import { ok } from '@/server/helpers/http';
 
-export async function POST(
-  _req: Request,
-  ctx: { params: Promise<{ projectId: string }> }
-) {
+export async function POST(_req: Request, ctx: { params: Promise<{ projectId: string }> }) {
   const { projectId } = await ctx.params;
 
   const project = await prisma.project.update({

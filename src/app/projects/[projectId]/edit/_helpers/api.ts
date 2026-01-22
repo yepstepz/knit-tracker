@@ -1,17 +1,17 @@
-import type { PhotoDraftState } from "@/app/_components/Form/photos/types";
-import { getCoverId } from "@/app/_components/Form/photos/utils";
-import {apiDelete, apiPatch, apiPost} from "@/app/_lib/request";
+import type { PhotoDraftState } from '@/app/_components/Form/photos/types';
+import { getCoverId } from '@/app/_components/Form/photos/utils';
+import { apiDelete, apiPatch, apiPost } from '@/app/_lib/request';
 
 // ------------------------
 // datetime helpers
 // ------------------------
 export function isoToLocalInput(iso: string | null | undefined) {
-  if (!iso) return "";
+  if (!iso) return '';
   const d = new Date(iso);
-  if (Number.isNaN(d.getTime())) return "";
-  const pad = (n: number) => String(n).padStart(2, "0");
+  if (Number.isNaN(d.getTime())) return '';
+  const pad = (n: number) => String(n).padStart(2, '0');
   return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(
-    d.getMinutes()
+    d.getMinutes(),
   )}`;
 }
 
@@ -95,10 +95,10 @@ export async function saveProjectAll(args: {
             uri: cover.uri,
             caption: cover.caption,
             alt: cover.alt.trim() ? cover.alt : undefined,
-            role: "COVER",
+            role: 'COVER',
           });
         } else {
-          await apiPatch(`/api/photos/${cover.id}`, { role: "COVER" });
+          await apiPatch(`/api/photos/${cover.id}`, { role: 'COVER' });
         }
       }
     }
@@ -108,13 +108,13 @@ export async function saveProjectAll(args: {
       const p = photoState.byId[id];
       if (!p || p.deleted) continue;
       if (!p.isTemp) continue;
-      if (p.role !== "GALLERY") continue;
+      if (p.role !== 'GALLERY') continue;
 
       await apiPost(`/api/projects/${projectId}/photos`, {
         uri: p.uri,
         caption: p.caption,
         alt: p.alt.trim() ? p.alt : undefined,
-        role: "GALLERY",
+        role: 'GALLERY',
       });
     }
 

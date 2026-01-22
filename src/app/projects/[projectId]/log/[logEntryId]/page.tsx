@@ -1,12 +1,12 @@
-import { notFound } from "next/navigation";
-import { apiGet } from "@/app/_lib/request";
-import { fmtDate } from "@/app/_lib/format";
-import type { LogEntry, ProjectDetail } from "@/types";
-import LogEntryClient from "./log-entry-client";
+import { notFound } from 'next/navigation';
+import { apiGet } from '@/app/_lib/request';
+import { fmtDate } from '@/app/_lib/format';
+import type { LogEntry, ProjectDetail } from '@/types';
+import LogEntryClient from './log-entry-client';
 
 export default async function LogEntryPage({
-                                             params,
-                                           }: {
+  params,
+}: {
   params: Promise<{ projectId: string; logEntryId: string }>;
 }) {
   const { projectId, logEntryId } = await params;

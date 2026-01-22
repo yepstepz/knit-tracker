@@ -1,32 +1,22 @@
-"use client";
+'use client';
 
-import Link from "next/link";
-import { useMemo, useState } from "react";
-import {
-  Badge,
-  Button,
-  Container,
-  Grid,
-  GridCol,
-  Group,
-  Stack,
-  Text,
-  Title,
-} from "@mantine/core";
-import { IconArchive, IconArrowLeft, IconCheck } from "@tabler/icons-react";
+import Link from 'next/link';
+import { useMemo, useState } from 'react';
+import { Badge, Button, Container, Grid, GridCol, Group, Stack, Text, Title } from '@mantine/core';
+import { IconArchive, IconArrowLeft, IconCheck } from '@tabler/icons-react';
 
-import { ProjectBasicsSection } from "@/app/_components/Form/project/ProjectBasicsSection";
-import { ProjectDatesSection } from "@/app/_components/Form/project/ProjectDatesSection";
-import { ProjectNotesSection } from "@/app/_components/Form/project/ProjectNotesSection";
-import { ProjectTagsSection } from "@/app/_components/Form/project/ProjectTagsSection";
+import { ProjectBasicsSection } from '@/app/_components/Form/project/ProjectBasicsSection';
+import { ProjectDatesSection } from '@/app/_components/Form/project/ProjectDatesSection';
+import { ProjectNotesSection } from '@/app/_components/Form/project/ProjectNotesSection';
+import { ProjectTagsSection } from '@/app/_components/Form/project/ProjectTagsSection';
 
-import { CoverSection } from "@/app/_components/Form/photos/CoverSection";
-import { GallerySection } from "@/app/_components/Form/photos/GallerySection";
-import type { Photo } from "@/app/_components/Form/photos/types";
-import { usePhotoDraft } from "@/app/_components/Form/photos/usePhotoDraft";
+import { CoverSection } from '@/app/_components/Form/photos/CoverSection';
+import { GallerySection } from '@/app/_components/Form/photos/GallerySection';
+import type { Photo } from '@/app/_components/Form/photos/types';
+import { usePhotoDraft } from '@/app/_components/Form/photos/usePhotoDraft';
 
-import { isoToLocalInput, saveProjectAll, toggleArchive } from "./_helpers/api";
-import { getCoverId } from "@/app/_components/Form/photos/utils";
+import { isoToLocalInput, saveProjectAll, toggleArchive } from './_helpers/api';
+import { getCoverId } from '@/app/_components/Form/photos/utils';
 
 type Tag = { id: string; name: string; color?: string | null };
 
@@ -43,21 +33,21 @@ type ProjectDetail = {
 };
 
 export default function EditProjectClient({
-                                            projectId,
-                                            project,
-                                            allTags,
-                                            photos,
-                                          }: {
+  projectId,
+  project,
+  allTags,
+  photos,
+}: {
   projectId: string;
   project: ProjectDetail;
   allTags: Tag[];
   photos: Photo[];
 }) {
   // fields draft
-  const [title, setTitle] = useState(project.title ?? "");
-  const [status, setStatus] = useState(project.status ?? "ACTIVE");
-  const [descriptionMd, setDescriptionMd] = useState(project.descriptionMd ?? "");
-  const [yarnPlan, setYarnPlan] = useState(project.yarnPlan ?? "");
+  const [title, setTitle] = useState(project.title ?? '');
+  const [status, setStatus] = useState(project.status ?? 'ACTIVE');
+  const [descriptionMd, setDescriptionMd] = useState(project.descriptionMd ?? '');
+  const [yarnPlan, setYarnPlan] = useState(project.yarnPlan ?? '');
   const [startedAtLocal, setStartedAtLocal] = useState(isoToLocalInput(project.startedAt));
   const [finishedAtLocal, setFinishedAtLocal] = useState(isoToLocalInput(project.finishedAt));
 
@@ -69,10 +59,10 @@ export default function EditProjectClient({
   const photosDraft = usePhotoDraft(photos);
 
   // cover draft inputs
-  const [coverDraft, setCoverDraft] = useState({ uri: "", caption: "", alt: "" });
+  const [coverDraft, setCoverDraft] = useState({ uri: '', caption: '', alt: '' });
 
   // gallery add draft inputs
-  const [addPhotoDraft, setAddPhotoDraft] = useState({ uri: "", caption: "", alt: "" });
+  const [addPhotoDraft, setAddPhotoDraft] = useState({ uri: '', caption: '', alt: '' });
 
   const [saving, setSaving] = useState(false);
   const [msg, setMsg] = useState<string | null>(null);
@@ -90,12 +80,12 @@ export default function EditProjectClient({
 
   const onQueueCoverReplace = () => {
     const ok = photosDraft.addCoverReplace(coverDraft);
-    if (ok) setCoverDraft({ uri: "", caption: "", alt: "" });
+    if (ok) setCoverDraft({ uri: '', caption: '', alt: '' });
   };
 
   const onAddGallery = (input: { uri: string; caption: string; alt: string }) => {
     const ok = photosDraft.addGallery(input);
-    if (ok) setAddPhotoDraft({ uri: "", caption: "", alt: "" });
+    if (ok) setAddPhotoDraft({ uri: '', caption: '', alt: '' });
   };
 
   const onSave = async () => {
@@ -116,10 +106,10 @@ export default function EditProjectClient({
         photoState: photosDraft.state,
       });
 
-      setMsg("Saved ✅");
+      setMsg('Saved ✅');
       window.location.reload();
     } catch (e: any) {
-      setMsg(e?.message ? `Error: ${e.message}` : "Error");
+      setMsg(e?.message ? `Error: ${e.message}` : 'Error');
       setSaving(false);
     }
   };
@@ -132,17 +122,17 @@ export default function EditProjectClient({
       await toggleArchive(projectId, isArchived);
       window.location.reload();
     } catch (e: any) {
-      setMsg(e?.message ? `Error: ${e.message}` : "Error");
+      setMsg(e?.message ? `Error: ${e.message}` : 'Error');
       setSaving(false);
     }
   };
 
   return (
-    <Container size={1200} py="xl">
-      <Stack gap="lg">
-        <Group justify="space-between" align="center" wrap="wrap">
-          <Link href={`/projects/${projectId}`} style={{ textDecoration: "none" }}>
-            <Group gap={8} c="dimmed">
+    <Container size={1200} py='xl'>
+      <Stack gap='lg'>
+        <Group justify='space-between' align='center' wrap='wrap'>
+          <Link href={`/projects/${projectId}`} style={{ textDecoration: 'none' }}>
+            <Group gap={8} c='dimmed'>
               <IconArrowLeft size={16} />
               <Text fw={600} inherit>
                 Project
@@ -150,28 +140,28 @@ export default function EditProjectClient({
             </Group>
           </Link>
 
-          <Group gap="xs">
-            <Badge color={isArchived ? "red" : "green"} variant="light" radius="sm">
-              {isArchived ? "Archived" : "Active"}
+          <Group gap='xs'>
+            <Badge color={isArchived ? 'red' : 'green'} variant='light' radius='sm'>
+              {isArchived ? 'Archived' : 'Active'}
             </Badge>
-            <Badge variant="outline" radius="sm">
+            <Badge variant='outline' radius='sm'>
               {project.status}
             </Badge>
           </Group>
         </Group>
 
-        <Group justify="space-between" align="center" wrap="wrap">
+        <Group justify='space-between' align='center' wrap='wrap'>
           <Title order={2}>Edit project</Title>
 
-          <Group gap="sm">
+          <Group gap='sm'>
             <Button
-              variant={isArchived ? "light" : "outline"}
-              color="red"
+              variant={isArchived ? 'light' : 'outline'}
+              color='red'
               leftSection={<IconArchive size={16} />}
               loading={saving}
               onClick={onArchiveToggle}
             >
-              {isArchived ? "Unarchive" : "Archive"}
+              {isArchived ? 'Unarchive' : 'Archive'}
             </Button>
 
             <Button leftSection={<IconCheck size={16} />} loading={saving} onClick={onSave}>
@@ -181,14 +171,14 @@ export default function EditProjectClient({
         </Group>
 
         {msg ? (
-          <Text c={msg.startsWith("Error") ? "red" : "dimmed"} size="sm">
+          <Text c={msg.startsWith('Error') ? 'red' : 'dimmed'} size='sm'>
             {msg}
           </Text>
         ) : null}
 
-        <Grid gutter="lg">
+        <Grid gutter='lg'>
           <GridCol span={{ base: 12, md: 8 }}>
-            <Stack gap="lg">
+            <Stack gap='lg'>
               <ProjectBasicsSection
                 title={title}
                 status={status}
@@ -231,7 +221,7 @@ export default function EditProjectClient({
           </GridCol>
 
           <GridCol span={{ base: 12, md: 4 }}>
-            <Stack gap="lg" style={{ position: "sticky", top: 16 }}>
+            <Stack gap='lg' style={{ position: 'sticky', top: 16 }}>
               <ProjectTagsSection allTags={allTags} tagIds={tagIds} onChange={setTagIds} />
 
               <CoverSection

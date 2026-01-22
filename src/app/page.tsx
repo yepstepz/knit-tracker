@@ -1,24 +1,30 @@
-import { apiGet } from "@/app/_lib/request";
-import { qs } from "./_lib/qs";
-import { Paginated, ProjectListItem, Tag } from "@/types";
+import { apiGet } from '@/app/_lib/request';
+import { qs } from './_lib/qs';
+import { Paginated, ProjectListItem, Tag } from '@/types';
 import { HomeClient } from './home-client';
 
 function fmtDateStable(iso: string) {
   const d = new Date(iso);
-  if (Number.isNaN(d.getTime())) return "—";
+  if (Number.isNaN(d.getTime())) return '—';
   // фиксируем locale чтобы не зависеть от окружения, или вообще делаем ISO-дату
-  return new Intl.DateTimeFormat("en-GB", { year: "numeric", month: "short", day: "2-digit" }).format(d);
+  return new Intl.DateTimeFormat('en-GB', {
+    year: 'numeric',
+    month: 'short',
+    day: '2-digit',
+  }).format(d);
 }
 
-export default async function Home({ searchParams}: {
+export default async function Home({
+  searchParams,
+}: {
   searchParams: Promise<{ page?: string; limit?: string; archived?: string; tagId?: string }>;
 }) {
   const sp = await searchParams;
 
-  const page = sp.page ?? "1";
+  const page = sp.page ?? '1';
   const limit = sp.limit;
   const tagId = sp.tagId;
-  const archived = sp.archived === "1" ? "1" : undefined;
+  const archived = sp.archived === '1' ? '1' : undefined;
 
   const [projectsRes, tagsRes] = await Promise.all([
     apiGet<Paginated<ProjectListItem>>(`/api/projects${qs({ page, limit, tagId, archived })}`),

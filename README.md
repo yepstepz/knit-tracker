@@ -2,9 +2,9 @@
 
 ### Prerequisites
 
-* Node.js (your project currently uses Prisma 7, so use a recent Node version that satisfies the Prisma engine requirements).
-* PostgreSQL running locally (Homebrew service is fine).
-* A local database created for the app.
+- Node.js (your project currently uses Prisma 7, so use a recent Node version that satisfies the Prisma engine requirements).
+- PostgreSQL running locally (Homebrew service is fine).
+- A local database created for the app.
 
 ### Environment variables
 
@@ -48,7 +48,7 @@ npm run dev
 
 Open:
 
-* [http://localhost:3000](http://localhost:3000)
+- [http://localhost:3000](http://localhost:3000)
 
 ---
 
@@ -92,6 +92,6 @@ npx prisma studio
 
 ## Notes
 
-* Keep `prisma/migrations/` committed to git. Migrations are the source of truth for evolving the schema.
-* If you see Prisma errors after changing schema, run `npx prisma generate` again.
-* If API endpoints fail with “column/table does not exist”, run `npx prisma migrate dev` (or `npm run db:reset` if you want a clean slate).
+- Keep `prisma/migrations/` committed to git. Migrations are the source of truth for evolving the schema.
+- If you see Prisma errors after changing schema, run `npx prisma generate` again.
+- If API endpoints fail with “column/table does not exist”, run `npx prisma migrate dev` (or `npm run db:reset` if you want a clean slate).

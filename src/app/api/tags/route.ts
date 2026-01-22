@@ -1,10 +1,10 @@
-import "server-only";
-import { prisma } from "@/lib/prisma";
-import { ok, badRequest } from "@/server/helpers/http";
+import 'server-only';
+import { prisma } from '@/lib/prisma';
+import { ok, badRequest } from '@/server/helpers/http';
 
 export async function GET(_req: Request) {
   const tags = await prisma.tag.findMany({
-    orderBy: { createdAt: "desc" },
+    orderBy: { createdAt: 'desc' },
   });
   return ok(tags);
 }
@@ -12,25 +12,21 @@ export async function GET(_req: Request) {
 export async function POST(req: Request) {
   const body = await req.json().catch(() => null);
 
-  const name = typeof body?.name === "string" ? body.name.trim() : "";
-  if (!name) return badRequest("name required");
+  const name = typeof body?.name === 'string' ? body.name.trim() : '';
+  if (!name) return badRequest('name required');
 
   const color =
-    body?.color === null
-      ? null
-      : typeof body?.color === "string"
-        ? body.color
-        : undefined;
+    body?.color === null ? null : typeof body?.color === 'string' ? body.color : undefined;
 
   // upsert по name (name должен быть @unique в schema)
   const tag = await prisma.tag.upsert({
     where: { name },
     create: {
       name,
-      color: typeof color === "string" ? color : "#FFFFFF",
+      color: typeof color === 'string' ? color : '#FFFFFF',
     },
     update: {
-      ...(typeof color !== "undefined" ? { color } : {}),
+      ...(typeof color !== 'undefined' ? { color } : {}),
     },
   });
 

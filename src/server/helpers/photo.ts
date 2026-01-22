@@ -1,7 +1,7 @@
-import "server-only";
-import { prisma } from "@/lib/prisma";
-import { PhotoRole } from "@prisma/client";
-import { nonEmptyString, optionalInt, optionalStringOrNull } from "./validators";
+import 'server-only';
+import { prisma } from '@/lib/prisma';
+import { PhotoRole } from '@prisma/client';
+import { nonEmptyString, optionalInt, optionalStringOrNull } from './validators';
 
 export type PhotoParsedInput = {
   uri: string;
@@ -12,7 +12,7 @@ export type PhotoParsedInput = {
 };
 
 export function isPhotoRole(v: string): v is PhotoRole {
-  return v === "COVER" || v === "GALLERY" || v === "LOG";
+  return v === 'COVER' || v === 'GALLERY' || v === 'LOG';
 }
 
 export async function nextPhotoSortOrder(where: { projectId?: string; logEntryId?: string }) {
@@ -33,36 +33,30 @@ export async function parseCreatePhotoInput(
   opts: {
     defaultRole?: PhotoRole;
     orderScope: { projectId?: string; logEntryId?: string };
-  }
+  },
 ): Promise<{ ok: true; value: PhotoParsedInput } | { ok: false; error: string }> {
-  if (!body || typeof body !== "object") return { ok: false, error: "invalid json" };
+  if (!body || typeof body !== 'object') return { ok: false, error: 'invalid json' };
 
   const b = body as any;
 
   const uri = nonEmptyString(b.uri);
-  if (!uri) return { ok: false, error: "uri required" };
+  if (!uri) return { ok: false, error: 'uri required' };
 
   const caption = optionalStringOrNull(b.caption); // null если не строка/не задано
   const altRaw = b.alt;
 
-  const alt =
-    altRaw === null
-      ? null
-      : typeof altRaw === "string"
-        ? altRaw
-        : caption;
+  const alt = altRaw === null ? null : typeof altRaw === 'string' ? altRaw : caption;
 
   let role = opts.defaultRole ?? PhotoRole.GALLERY;
   if (b.role !== undefined) {
-    if (typeof b.role !== "string" || !isPhotoRole(b.role)) {
-      return { ok: false, error: "role must be a valid PhotoRole" };
+    if (typeof b.role !== 'string' || !isPhotoRole(b.role)) {
+      return { ok: false, error: 'role must be a valid PhotoRole' };
     }
     role = b.role as PhotoRole;
   }
 
   const sortOrderProvided = optionalInt(b.sortOrder);
-  const sortOrder =
-    sortOrderProvided ?? (await nextPhotoSortOrder(opts.orderScope));
+  const sortOrder = sortOrderProvided ?? (await nextPhotoSortOrder(opts.orderScope));
 
   return { ok: true, value: { uri, caption, alt, role, sortOrder } };
 }

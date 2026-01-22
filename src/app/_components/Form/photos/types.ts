@@ -1,4 +1,4 @@
-export type PhotoRole = "COVER" | "GALLERY";
+export type PhotoRole = 'COVER' | 'GALLERY';
 
 export type Photo = {
   id: string;
@@ -10,13 +10,13 @@ export type Photo = {
 };
 
 export type DraftPhoto = {
-  id: string;                 // real id или temp id
+  id: string; // real id или temp id
   isTemp: boolean;
-  deleted?: boolean;          // только для existing
+  deleted?: boolean; // только для existing
   // current fields:
   uri: string;
   caption: string;
-  alt: string;                // в UI держим строку, на API -> null/undefined
+  alt: string; // в UI держим строку, на API -> null/undefined
   role: PhotoRole;
   sortOrder: number;
 
@@ -31,6 +31,6 @@ export type DraftPhoto = {
 };
 
 export type PhotoDraftState = {
-  order: string[];                  // порядок карточек
-  byId: Record<string, DraftPhoto>;  // и temp, и existing
+  order: string[]; // порядок карточек
+  byId: Record<string, DraftPhoto>; // и temp, и existing
 };

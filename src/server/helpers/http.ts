@@ -1,5 +1,5 @@
-import "server-only";
-import { NextResponse } from "next/server";
+import 'server-only';
+import { NextResponse } from 'next/server';
 
 export function ok(data: unknown, init?: ResponseInit) {
   return NextResponse.json(data, init);
@@ -13,6 +13,6 @@ export function badRequest(message: string) {
   return NextResponse.json({ error: message }, { status: 400 });
 }
 
-export function notFound(message = "not found") {
+export function notFound(message = 'not found') {
   return NextResponse.json({ error: message }, { status: 404 });
 }
