@@ -14,8 +14,6 @@ export default async function ProjectPage({ params }: { params: Promise<{ projec
     happenedAt: fmtDate(log.happenedAt),
   }));
 
-  console.log(projectApi);
-
   const project = {
     ...projectApi,
     createdAt: fmtDate(projectApi.createdAt),

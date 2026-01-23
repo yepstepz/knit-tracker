@@ -32,16 +32,23 @@ function KeyValue({
 }) {
   return (
     <Stack gap={10}>
-      {rows.map((r) => (
-        <Group key={r.k} justify='space-between' align='baseline' wrap='nowrap'>
-          <Text size='sm' c='dimmed'>
-            {r.k}
-          </Text>
-          <Text size='sm' fw={600}>
-            {r.v ?? '—'}
-          </Text>
-        </Group>
-      ))}
+      {rows.map(
+        (r) =>
+          r.v !== null && (
+            <Group key={r.k} justify='space-between' align='baseline' wrap='nowrap'>
+              <Text as='div' size='sm' c='dimmed'>
+                {r.k}
+              </Text>
+              {typeof r.v === 'string' ? (
+                <Text as='div' size='sm' fw={600}>
+                  {r.v ?? '—'}
+                </Text>
+              ) : (
+                <>{r.v ?? '1'}</>
+              )}
+            </Group>
+          ),
+      )}
     </Stack>
   );
 }
@@ -83,8 +90,6 @@ export function ProjectPageClient({
 }) {
   const photos = buildPhotoStack(project);
   const tags = project.tags ?? [];
-
-  console.log(project.archivedAt);
 
   const overviewRows = [
     {

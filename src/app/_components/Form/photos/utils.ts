@@ -52,35 +52,3 @@ export function getCoverId(state: PhotoDraftState): string | null {
   }
   return null;
 }
-
-export function setCover(state: PhotoDraftState, coverId: string) {
-  // only one cover among non-deleted
-  for (const id of state.order) {
-    const p = state.byId[id];
-    if (!p || p.deleted) continue;
-    p.role = id === coverId ? 'COVER' : 'GALLERY';
-  }
-}
-
-export function addTempPhoto(
-  state: PhotoDraftState,
-  photo: { uri: string; caption: string; alt?: string; role: PhotoRole; sortOrder?: number },
-): string {
-  const id = makeTempId();
-  state.byId[id] = {
-    id,
-    isTemp: true,
-    uri: photo.uri,
-    caption: photo.caption,
-    alt: photo.alt ?? '',
-    role: photo.role,
-    sortOrder: photo.sortOrder ?? 0,
-  };
-  state.order.unshift(id);
-  return id;
-}
-
-export function removeTemp(state: PhotoDraftState, id: string) {
-  delete state.byId[id];
-  state.order = state.order.filter((x) => x !== id);
-}
