@@ -15,6 +15,7 @@ import {
 import { ProjectCard } from '@/app/_components/ProjectCard';
 import type { ProjectCardModel } from '@/app/_components/ProjectCard';
 import { IconPlus, IconInfoCircle } from '@tabler/icons-react';
+import Link from 'next/link';
 
 export function HomeClient({
   projects,
@@ -60,15 +61,17 @@ export function HomeClient({
               </Text>
             </Stack>
 
-            <Button
-              leftSection={<IconPlus size={16} />}
-              variant='light'
-              radius='md'
-              w={{ base: '100%', sm: 'auto' }}
-              // если хочешь, чтобы кнопка не была ниже из-за line-height
-            >
-              New project
-            </Button>
+            <Link href='/projects/create'>
+              <Button
+                leftSection={<IconPlus size={16} />}
+                variant='light'
+                radius='md'
+                w={{ base: '100%', sm: 'auto' }}
+                // если хочешь, чтобы кнопка не была ниже из-за line-height
+              >
+                New project
+              </Button>
+            </Link>
           </Group>
           <SegmentedControl
             value={mode}

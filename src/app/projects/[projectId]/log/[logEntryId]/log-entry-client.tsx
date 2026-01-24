@@ -96,6 +96,11 @@ export default function LogEntryClient({
 
         {/* Actions */}
         <Group justify='space-between' align='center' wrap='wrap'>
+          <DeleteLogEntryButton
+            projectId={projectId}
+            logEntryId={logEntryId}
+            redirectTo={redirectTo}
+          />
           <Link
             href={`/projects/${projectId}/log/${logEntryId}/edit`}
             style={{ textDecoration: 'none' }}
@@ -104,12 +109,6 @@ export default function LogEntryClient({
               Edit log
             </Button>
           </Link>
-
-          <DeleteLogEntryButton
-            projectId={projectId}
-            logEntryId={logEntryId}
-            redirectTo={redirectTo}
-          />
         </Group>
       </Stack>
     </Container>

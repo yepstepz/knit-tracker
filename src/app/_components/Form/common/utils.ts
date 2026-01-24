@@ -70,7 +70,47 @@ export function diffPhotos(initial, desired) {
   }
 
   const toDelete: string[] = [];
-  for (const p of initial) if (!seen.has(p.id)) toDelete.push(p.id);
+  for (const p of initial) if (!seen.has(p.id) && p.uri) toDelete.push(p.id);
 
   return { toDelete, toCreate, toPatch };
+}
+
+import { apiDelete, apiPatch, apiPost } from '@/app/_lib/request';
+import { Photo } from '@/types';
+
+type PatchPhoto = { id: string; patch: Partial<Photo> };
+
+export async function deletePhotos(photoIds) {
+  for (const id of photoIds) {
+    await apiDelete(`/api/photos/${id}`);
+  }
+}
+
+export async function createPhotos({ projectId, logEntryId, photos }) {
+  let url = `/api/projects/${projectId}/photos`;
+  if (logEntryId !== undefined) {
+    url = `/api/projects/${projectId}/log/${logEntryId}/photos`;
+  }
+  for (const p of photos) {
+    await apiPost(url, {
+      uri: p.uri,
+      caption: p.caption,
+      alt: p.alt ?? null,
+      role: p.role,
+    });
+  }
+}
+
+export async function patchPhotos(photos) {
+  for (const p of photos) {
+    await apiPatch(`/api/photos/${p.id}`, p.patch);
+  }
+}
+
+export async function processPhotos({ toCreate, toPatch, toDelete, projectId, logEntryId }) {
+  return Promise.all([
+    deletePhotos(toDelete),
+    createPhotos({ projectId, logEntryId, photos: toCreate }),
+    patchPhotos(toPatch),
+  ]);
 }

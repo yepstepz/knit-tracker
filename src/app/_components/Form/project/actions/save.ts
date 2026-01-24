@@ -2,8 +2,12 @@
 import { apiDelete, apiPatch, apiPost, apiPostWithResponse } from '@/app/_lib/request';
 import { ProjectFormMode } from '@/app/_components/Form/project/types';
 import { ProjectDetail, Tag, Photo } from '@/types';
-import { collectTags, diffPhotos, unifyPhotos } from '@/app/_components/Form/project/_helpers';
-import { processPhotos } from '@/app/_components/Form/project/actions/image';
+import {
+  collectTags,
+  diffPhotos,
+  unifyPhotos,
+  processPhotos,
+} from '@/app/_components/Form/common/utils';
 
 type Args = {
   mode: ProjectFormMode;
@@ -79,8 +83,6 @@ export async function save({
   );
 
   await processPhotos({ toDelete, toCreate, toPatch, projectId });
-
-  console.log({ toDelete, toCreate, toPatch });
 
   if (mode.kind === 'create') {
     const created = await apiPostWithResponse<{ id: string }>(`/api/projects`, {

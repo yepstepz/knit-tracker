@@ -1,8 +1,4 @@
-// src/app/_components/Form/project/ProjectFormClient.tsx
 'use client';
-
-import '@mantine/core/styles.css';
-import '@mantine/dates/styles.css';
 
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
@@ -34,12 +30,15 @@ import {
   FINISHED,
   ABANDONED,
   defaultCover,
+  emptyProject,
 } from '@/app/_components/Form/project/const';
-import { normalizeTags } from './_helpers/index';
+import { normalizeTags } from '../common/utils';
 import { ProjectDetail } from '@/types';
-import { FormProvider, useForm, useFormContext } from './actions/form-context';
-import { Gallery, CoverImage, FormTopBar } from '@/app/_components/Form/common';
+import { FormProvider, useFormContext } from './actions/form-context';
+import { FormTopBar } from '@/app/_components/Form/common/FormTopBar';
 import { projectForm } from '@/app/_components/Form/project/actions/form-controller';
+import { Gallery } from './Gallery';
+import { CoverImage } from './Cover';
 
 export function ProjectFormClient(props: {
   mode: ProjectFormMode;
@@ -55,9 +54,9 @@ export function ProjectFormClient(props: {
 
   const statusOptions: ProjectStatus[] = [ACTIVE, FINISHED, PAUSED, ABANDONED, IDEA];
 
-  const p = props.project;
+  const initialProject = props.project || emptyProject;
   const backUrl = props.backHref;
-  const form = projectForm(p);
+  const form = projectForm(initialProject);
 
   const onSubmit = form.onSubmit(async (values) => {
     setSaving(true);
@@ -65,14 +64,13 @@ export function ProjectFormClient(props: {
     try {
       const { goTo } = await save({
         mode: props.mode,
-        initialProject: props.project,
+        initialProject,
         allTags: props.allTags,
         values: { ...form.getTransformedValues() },
       });
       router.replace(goTo);
       router.refresh();
     } catch (e: any) {
-      console.log(e);
       setMsg(e?.message ? `Error: ${e.message}` : 'Error');
       setSaving(false);
     }
@@ -148,6 +146,9 @@ export function ProjectFormClient(props: {
               </Grid.Col>
               <Grid.Col span={{ base: 12, md: 5 }}>
                 <Stack gap='sm'>
+                  <Button type='submit' leftSection={<IconCheck size={16} />} loading={saving}>
+                    Save
+                  </Button>
                   <Paper withBorder radius='lg' p='lg'>
                     <CoverImage context={useFormContext} />
                   </Paper>
@@ -169,24 +170,19 @@ export function ProjectFormClient(props: {
                         clearable
                         label='Started at'
                         value={form.values.startedAt}
-                        onChange={(v) => form.setFieldValue('startedAt', v)}
+                        {...form.getInputProps('startedAt')}
                       />
                       <DateTimePicker
                         clearable
                         label='Finished at'
                         value={form.values.finishedAt}
-                        onChange={(v) => form.setFieldValue('finishedAt', v)}
+                        {...form.getInputProps('finishedAt')}
                       />
                     </Stack>
                   </Paper>
                 </Stack>
               </Grid.Col>
             </Grid>
-            <Group justify='flex-end'>
-              <Button type='submit' leftSection={<IconCheck size={16} />} loading={saving}>
-                Save
-              </Button>
-            </Group>
           </Stack>
         </form>
       </Container>

@@ -1,153 +1,105 @@
-'use client';
-
-import Link from 'next/link';
+import { logEntryForm } from '@/app/_components/Form/log/actions/form-controller';
+import { emptyLogEntry } from '@/app/_components/Form/log/const';
 import { useRouter } from 'next/navigation';
+
+import { save } from './actions/save';
+import { FormProvider } from '@/app/_components/Form/log/actions/form-context';
+import {
+  Button,
+  Container,
+  Grid,
+  Group,
+  Paper,
+  Stack,
+  Text,
+  Textarea,
+  TextInput,
+  Title,
+} from '@mantine/core';
+import { FormTopBar } from '@/app/_components/Form/common/FormTopBar';
+import { DateTimePicker } from '@mantine/dates';
+import { LogPhoto } from '@/app/_components/Form/log/LogPhoto';
+import { useFormContext } from '@/app/_components/Form/log/actions/form-context';
+import { IconCheck } from '@tabler/icons-react';
 import { useState } from 'react';
-import { Badge, Button, Container, Group, Paper, Stack, Text, Title } from '@mantine/core';
-import { IconArrowLeft, IconCheck } from '@tabler/icons-react';
 
-import type { LogPhoto } from '@/types';
-import { isoToLocalInput } from '@/app/projects/[projectId]/edit/_helpers/api';
-import { usePhotoDraft } from '@/app/_components/Form/photos/usePhotoDraft';
-import { SinglePhotoSection } from '@/app/_components/Form/photos/SinglePhotoSection';
-
-import { LogBasicsSection } from './LogBasicsSection'; // если у тебя уже есть; если нет — оставь как раньше
-import { saveLogEntry } from './_helpers/api';
-
-export function LogEntryFormClient(props: {
-  mode:
-    | { kind: 'create'; backTo: string }
-    | { kind: 'edit'; logEntryId: string; redirectTo: string };
-
-  projectId: string;
-  projectTitle: string;
-  projectStatus: string;
-  projectArchivedAt: string | null;
-
-  initial?: {
-    title?: string;
-    contentMd?: string;
-    happenedAt?: string | null;
-    photo?: LogPhoto | null;
-  };
-}) {
-  const router = useRouter();
-  const initial = props.initial ?? {};
-
-  const [title, setTitle] = useState(initial.title ?? '');
-  const [contentMd, setContentMd] = useState(initial.contentMd ?? '');
-  const [happenedAtLocal, setHappenedAtLocal] = useState(() =>
-    isoToLocalInput(initial.happenedAt ?? new Date().toISOString()),
-  );
-
-  const photoDraft = usePhotoDraft({
-    kind: 'single',
-    initial: initial.photo
-      ? {
-          id: initial.photo.id,
-          uri: initial.photo.uri,
-          caption: initial.photo.caption,
-          alt: initial.photo.alt ?? null,
-        }
-      : null,
-  });
-
+export function LogEntryFormClient(props) {
   const [saving, setSaving] = useState(false);
   const [msg, setMsg] = useState<string | null>(null);
 
-  const backHref = props.mode.kind === 'create' ? props.mode.backTo : props.mode.redirectTo;
+  const router = useRouter();
+  const initialForm = props.log || emptyLogEntry;
+  console.log({ initialForm });
+  initialForm.photo ??= { uri: '', caption: '', alt: '' };
+  const form = logEntryForm(initialForm);
 
-  const onSave = async () => {
-    setSaving(true);
-    setMsg(null);
-
+  const onSubmit = form.onSubmit(async (values) => {
     try {
-      const { logEntryId } = await saveLogEntry({
+      setSaving(true);
+      setMsg(null);
+      await save({
+        project: props.project,
         mode: props.mode,
-        projectId: props.projectId,
-        title,
-        contentMd,
-        happenedAtLocal,
-        photoPlan: photoDraft.getPlan(),
+        initialForm,
+        values: { ...form.getTransformedValues() },
       });
-
-      const goTo =
-        props.mode.kind === 'create'
-          ? props.mode.backTo || `/projects/${props.projectId}/log/${logEntryId}`
-          : props.mode.redirectTo;
-
-      router.replace(goTo);
+      router.replace(props.redirectTo);
       router.refresh();
     } catch (e: any) {
       setMsg(e?.message ? `Error: ${e.message}` : 'Error');
       setSaving(false);
     }
-  };
+  });
 
   return (
-    <Container size={900} py='xl'>
-      <Stack gap='lg'>
-        <Group justify='space-between' align='center' wrap='wrap'>
-          <Link href={backHref} style={{ textDecoration: 'none' }}>
-            <Button variant='subtle' leftSection={<IconArrowLeft size={16} />}>
-              Back
-            </Button>
-          </Link>
-
-          <Group gap='xs'>
-            {props.projectArchivedAt ? (
-              <Badge color='red' variant='light' radius='sm'>
-                Archived
-              </Badge>
+    <FormProvider form={form}>
+      <Container size={1000} py='xl'>
+        <FormTopBar title='Back' backHref={props.redirectTo} />
+        <form onSubmit={onSubmit}>
+          <Stack gap='md'>
+            <Title order={2}>{props.mode.kind === 'create' ? 'Create log' : 'Log settings'}</Title>
+            {msg ? (
+              <Text c='red' size='sm'>
+                {msg}
+              </Text>
             ) : null}
-            <Badge variant='outline' radius='sm'>
-              {props.projectStatus}
-            </Badge>
-          </Group>
-        </Group>
-
-        <Stack gap={6}>
-          <Text size='sm' c='dimmed'>
-            {props.mode.kind === 'create' ? 'New log' : 'Edit log'} · {props.projectTitle}
-          </Text>
-          <Title order={2}>
-            {props.mode.kind === 'create' ? 'Create log entry' : (initial.title ?? 'Edit log')}
-          </Title>
-        </Stack>
-
-        {msg ? (
-          <Text c='red' size='sm'>
-            {msg}
-          </Text>
-        ) : null}
-
-        <Paper withBorder radius='lg' p='lg'>
-          <LogBasicsSection
-            title={title}
-            happenedAtLocal={happenedAtLocal}
-            contentMd={contentMd}
-            onChange={(p) => {
-              if (p.title !== undefined) setTitle(p.title);
-              if (p.happenedAtLocal !== undefined) setHappenedAtLocal(p.happenedAtLocal);
-              if (p.contentMd !== undefined) setContentMd(p.contentMd);
-            }}
-          />
-        </Paper>
-
-        <Paper withBorder radius='lg' p='lg'>
-          <SinglePhotoSection title='Photo' draft={photoDraft} showRemove hint='Applied on Save.' />
-        </Paper>
-
-        <Group justify='space-between' align='center' wrap='wrap'>
-          <Link href={backHref} style={{ textDecoration: 'none' }}>
-            <Button variant='subtle'>Cancel</Button>
-          </Link>
-
-          <Button leftSection={<IconCheck size={16} />} loading={saving} onClick={onSave}>
-            Save
-          </Button>
-        </Group>
-      </Stack>
-    </Container>
+            <Grid gutter='lg'>
+              <Grid.Col span={{ base: 12, md: 7 }}>
+                <Stack gap='md'>
+                  <Paper withBorder radius='lg' p='lg'>
+                    <Stack gap='md'>
+                      <TextInput label='Title' {...form.getInputProps('title')} />
+                    </Stack>
+                  </Paper>
+                  <Paper withBorder radius='lg' p='lg'>
+                    <DateTimePicker label='Happened at' {...form.getInputProps('happenedAt')} />
+                  </Paper>
+                  <Paper withBorder radius='lg' p='lg'>
+                    <Textarea
+                      label='Description'
+                      description='Put Md here'
+                      placeholder='Description Md'
+                      minRows={2}
+                      autosize
+                      {...form.getInputProps('contentMd')}
+                    />
+                  </Paper>
+                </Stack>
+              </Grid.Col>
+              <Grid.Col span={{ base: 12, md: 5 }}>
+                <Stack gap='md'>
+                  <Button type='submit' leftSection={<IconCheck size={16} />} loading={saving}>
+                    Save
+                  </Button>
+                  <Paper withBorder radius='lg' p='lg'>
+                    <LogPhoto context={useFormContext} fieldName='photo' />
+                  </Paper>
+                </Stack>
+              </Grid.Col>
+            </Grid>
+          </Stack>
+        </form>
+      </Container>
+    </FormProvider>
   );
 }
