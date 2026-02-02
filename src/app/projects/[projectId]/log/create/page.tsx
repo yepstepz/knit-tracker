@@ -7,12 +7,12 @@ export default async function CreateLogEntryPage({
   params,
   searchParams,
 }: {
-  params: Promise<{ projectId: string; logEntryId: string }>;
+  params: Promise<{ projectId: string }>;
+  searchParams?: Promise<{ backTo?: string }>;
 }) {
   const { projectId } = await params;
-  const { backTo } = await searchParams;
-
-  console.log({ backTo });
+  const sp = searchParams ? await searchParams : undefined;
+  const backTo = sp?.backTo ?? `/projects/${projectId}/log?page=1&limit=10`;
 
   let project: ProjectDetail;
 

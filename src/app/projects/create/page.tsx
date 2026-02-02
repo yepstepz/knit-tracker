@@ -13,5 +13,5 @@ export default async function CreateProjectPage() {
     notFound();
   }
 
-  return <CreateProjectClient project={{}} allTags={allTags} backHref={'/'} redirectTo={'/'} />;
+  return <CreateProjectClient allTags={allTags} backHref='/' redirectTo='/' />;
 }

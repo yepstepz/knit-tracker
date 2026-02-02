@@ -16,10 +16,17 @@ export async function addLogEntryPhoto(projectId: string, logEntryId: string, bo
 
   if (!parsed.ok) return badRequest(parsed.error);
 
+  const input = parsed.value;
+  const data = {
+    ...input,
+    caption: input.caption ?? undefined,
+    alt: input.alt ?? undefined,
+  };
+
   const photo = await prisma.photo.create({
     data: {
       logEntryId,
-      ...parsed.value,
+      ...data,
     },
   });
 

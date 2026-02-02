@@ -1,5 +1,6 @@
 'use client';
 
+import { useContext } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import {
   SegmentedControl,
@@ -16,6 +17,7 @@ import { ProjectCard } from '@/app/_components/ProjectCard';
 import type { ProjectCardModel } from '@/app/_components/ProjectCard';
 import { IconPlus, IconInfoCircle } from '@tabler/icons-react';
 import Link from 'next/link';
+import { UserContext } from '@/app/_components/UserProvider/user-context';
 
 export function HomeClient({
   projects,
@@ -24,7 +26,12 @@ export function HomeClient({
   totalPages,
 }: {
   projects: ProjectCardModel[];
+  page: number;
+  total: number;
+  totalPages: number;
 }) {
+  const user = useContext(UserContext);
+  const isLoggedIn = !!user;
   const router = useRouter();
   const sp = useSearchParams();
 
@@ -46,7 +53,7 @@ export function HomeClient({
   return (
     <>
       <Container
-        size={900} // ширина “ленты”
+        size={1000} // ширина “ленты”
         px={{ base: 'md', sm: 'lg' }} // отступы на мобиле/десктопе
         py='lg'
       >
@@ -61,17 +68,19 @@ export function HomeClient({
               </Text>
             </Stack>
 
-            <Link href='/projects/create'>
-              <Button
-                leftSection={<IconPlus size={16} />}
-                variant='light'
-                radius='md'
-                w={{ base: '100%', sm: 'auto' }}
-                // если хочешь, чтобы кнопка не была ниже из-за line-height
-              >
-                New project
-              </Button>
-            </Link>
+            {isLoggedIn ? (
+              <Link href='/projects/create'>
+                <Button
+                  leftSection={<IconPlus size={16} />}
+                  variant='light'
+                  radius='md'
+                  w={{ base: '100%', sm: 'auto' }}
+                  // если хочешь, чтобы кнопка не была ниже из-за line-height
+                >
+                  New project
+                </Button>
+              </Link>
+            ) : null}
           </Group>
           <SegmentedControl
             value={mode}

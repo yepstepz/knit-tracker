@@ -5,10 +5,10 @@ export const logEntryForm = (logEntry: Partial<LogEntry>) => {
   return useForm({
     mode: 'controlled',
     initialValues: {
-      title: logEntry.title,
-      happenedAt: logEntry.happenedAt,
-      contentMd: logEntry.contentMd,
-      photo: logEntry.photo,
+      title: logEntry.title ?? '',
+      happenedAt: logEntry.happenedAt ?? undefined,
+      contentMd: logEntry.contentMd ?? '',
+      photo: logEntry.photo ?? null,
     },
     transformValues: (values) => ({
       ...values,

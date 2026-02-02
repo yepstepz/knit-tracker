@@ -1,4 +1,5 @@
 import type { ProjectStatus } from '@prisma/client';
+import type { ImageValue } from '@/app/_components/Form/common/ImageField/utils';
 import { ProjectDetail } from '@/types';
 
 export const IDEA = 'IDEA';
@@ -28,4 +29,4 @@ export const emptyProject = {
   photos: [],
 };
 
-export const defaultCover = { uri: '', caption: '', alt: '', role: 'GALLERY' };
+export const defaultCover: ImageValue = { uri: '', caption: '', alt: '', role: 'GALLERY' };

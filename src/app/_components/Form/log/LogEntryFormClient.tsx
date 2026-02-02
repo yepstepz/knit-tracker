@@ -22,14 +22,21 @@ import { LogPhoto } from '@/app/_components/Form/log/LogPhoto';
 import { useFormContext } from '@/app/_components/Form/log/actions/form-context';
 import { IconCheck } from '@tabler/icons-react';
 import { useState } from 'react';
+import type { LogEntry, ProjectDetail } from '@/types';
 
-export function LogEntryFormClient(props) {
+type LogEntryFormClientProps = {
+  project: ProjectDetail;
+  redirectTo: string;
+  mode: { kind: 'create' } | { kind: 'edit'; logEntryId: string };
+  log?: LogEntry;
+};
+
+export function LogEntryFormClient(props: LogEntryFormClientProps) {
   const [saving, setSaving] = useState(false);
   const [msg, setMsg] = useState<string | null>(null);
 
   const router = useRouter();
   const initialForm = props.log || emptyLogEntry;
-  console.log({ initialForm });
   initialForm.photo ??= { uri: '', caption: '', alt: '' };
   const form = logEntryForm(initialForm);
 

@@ -36,7 +36,7 @@ export default function TagPageClient({
   projects: ProjectDetail[];
 }) {
   return (
-    <Container size={1100} py='xl'>
+    <Container size={1000} py='xl'>
       <Stack gap='lg'>
         {/* Top bar */}
         <Group justify='space-between' align='center' wrap='wrap'>

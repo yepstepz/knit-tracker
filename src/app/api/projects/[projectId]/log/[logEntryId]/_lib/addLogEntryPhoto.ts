@@ -17,14 +17,21 @@ export async function addLogEntryPhoto(projectId: string, logEntryId: string, bo
   });
   if (!parsed.ok) return badRequest(parsed.error);
 
+  const input = parsed.value;
+  const data = {
+    ...input,
+    caption: input.caption ?? undefined,
+    alt: input.alt ?? undefined,
+  };
+
   const photo = await prisma.photo.upsert({
     where: { logEntryId },
     update: {
-      ...parsed.value, // uri, caption, alt(default=caption), role, sortOrder
+      ...data, // uri, caption, alt(default=caption), role, sortOrder
     },
     create: {
       logEntryId,
-      ...parsed.value,
+      ...data,
     },
   });
 

@@ -13,6 +13,11 @@ export async function addProjectPhoto(projectId: string, body: unknown) {
   if (!parsed.ok) return badRequest(parsed.error);
 
   const input = parsed.value;
+  const data = {
+    ...input,
+    caption: input.caption ?? undefined,
+    alt: input.alt ?? undefined,
+  };
 
   const photo = await prisma.$transaction(async (tx) => {
     if (input.role === PhotoRole.COVER) {
@@ -28,7 +33,7 @@ export async function addProjectPhoto(projectId: string, body: unknown) {
     return tx.photo.create({
       data: {
         projectId,
-        ...input, // uri, caption, alt (default=caption), role, sortOrder
+        ...data, // uri, caption, alt (default=caption), role, sortOrder
       },
     });
   });

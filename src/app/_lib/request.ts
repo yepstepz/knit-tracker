@@ -1,12 +1,14 @@
 import { apiFetch } from './apiFetch';
 
 export const apiGet = <T>(path: string) => apiFetch<T>(path, { method: 'GET' });
+export const apiGetCached = <T>(path: string, revalidate = 60 * 60 * 24) =>
+  apiFetch<T>(path, { method: 'GET', cache: 'force-cache', next: { revalidate } });
 
 export const apiDelete = (path: string) => apiFetch<void>(path, { method: 'DELETE', noBody: true });
 
 /** POST без ответа (по умолчанию) */
-export const apiPost = <B = unknown>(path: string, body?: B) =>
-  apiFetch<void, B>(path, { method: 'POST', body, noBody: true });
+export const apiPost = <B = unknown>(path: string, body?: B, skipAuthCheck: boolean = false) =>
+  apiFetch<void, B>(path, { method: 'POST', body, noBody: true, skipAuthCheck });
 
 /** PATCH без ответа (по умолчанию) */
 export const apiPatch = <B = unknown>(path: string, body?: B) =>

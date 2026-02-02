@@ -25,6 +25,7 @@ type ApiFetchOptions<B = unknown> = {
    * - на клиенте остаётся относительным
    */
   useInternalBaseUrl?: boolean;
+  skipAuthCheck?: boolean;
 };
 
 function isPlainObject(value: unknown): value is Record<string, unknown> {
@@ -59,7 +60,19 @@ export async function apiFetch<T = unknown, B = unknown>(
     signal,
     noBody = false,
     useInternalBaseUrl = true,
+    skipAuthCheck = false,
   } = opts;
+
+  if (!skipAuthCheck && method !== 'GET') {
+    const userRes = await fetch(resolveUrl('/api/users/me', useInternalBaseUrl), {
+      credentials: 'include',
+      cache: 'no-store',
+    });
+    const user = await userRes.json().catch(() => null);
+    if (user === null) {
+      throw new Error(`${method} ${path} failed: Not Authorized`);
+    }
+  }
 
   const url = resolveUrl(path, useInternalBaseUrl);
 

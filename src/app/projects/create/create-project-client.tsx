@@ -10,7 +10,7 @@ export default function CreateProjectClient(props: {
 }) {
   return (
     <ProjectFormClient
-      mode={{ kind: 'create', redirectTo: props.redirectTo }}
+      mode={{ kind: 'create', redirectTo: () => props.redirectTo }}
       allTags={props.allTags}
       backHref={props.backHref}
     />

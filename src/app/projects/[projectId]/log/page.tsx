@@ -29,7 +29,7 @@ export default async function ProjectLogPage({
   const items = logs.items.map((e) => ({
     id: e.id,
     title: e.title,
-    happenedAtLabel: fmtDate(e.happenedAt),
+    happenedAtLabel: fmtDate(e.happenedAt) ?? '—',
     photo: e.photo ? { uri: e.photo.uri, alt: e.photo.alt ?? e.photo.caption ?? e.title } : null,
     preview: e.contentMd?.trim() ? markdownPreview(e.contentMd) : '',
   }));

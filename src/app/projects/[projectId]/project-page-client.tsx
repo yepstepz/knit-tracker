@@ -1,6 +1,7 @@
 'use client';
 
 import type { ReactNode } from 'react';
+import { useContext } from 'react';
 import Link from 'next/link';
 import {
   Badge,
@@ -20,6 +21,7 @@ import {
 import { IconArrowLeft, IconEdit, IconPlus } from '@tabler/icons-react';
 
 import type { Photo, ProjectDetail } from '@/types';
+import { UserContext } from '@/app/_components/UserProvider/user-context';
 
 function buildPhotoStack(project: ProjectDetail): Photo[] {
   return [...(project.cover ? [project.cover] : []), ...(project.photos ?? [])];
@@ -36,11 +38,11 @@ function KeyValue({
         (r) =>
           r.v !== null && (
             <Group key={r.k} justify='space-between' align='baseline' wrap='nowrap'>
-              <Text as='div' size='sm' c='dimmed'>
+              <Text component='div' size='sm' c='dimmed'>
                 {r.k}
               </Text>
               {typeof r.v === 'string' ? (
-                <Text as='div' size='sm' fw={600}>
+                <Text component='div' size='sm' fw={600}>
                   {r.v ?? '—'}
                 </Text>
               ) : (
@@ -88,6 +90,8 @@ export function ProjectPageClient({
   projectId: string;
   project: ProjectDetail;
 }) {
+  const user = useContext(UserContext);
+  const isLoggedIn = !!user;
   const photos = buildPhotoStack(project);
   const tags = project.tags ?? [];
 
@@ -120,7 +124,7 @@ export function ProjectPageClient({
   ];
 
   return (
-    <Container size={1200} py='xl'>
+    <Container size={1000} py='xl'>
       <Stack gap='lg'>
         {/* Top bar */}
         <Group justify='space-between' align='center' wrap='wrap' gap='md'>
@@ -133,13 +137,15 @@ export function ProjectPageClient({
             </Group>
           </Link>
 
-          <Group gap='sm'>
-            <Link href={`/projects/${projectId}/edit`} style={{ textDecoration: 'none' }}>
-              <Button variant='light' leftSection={<IconEdit size={16} />}>
-                Edit
-              </Button>
-            </Link>
-          </Group>
+          {isLoggedIn ? (
+            <Group gap='sm'>
+              <Link href={`/projects/${projectId}/edit`} style={{ textDecoration: 'none' }}>
+                <Button variant='light' leftSection={<IconEdit size={16} />}>
+                  Edit
+                </Button>
+              </Link>
+            </Group>
+          ) : null}
         </Group>
 
         <Grid gutter='lg'>
@@ -200,16 +206,18 @@ export function ProjectPageClient({
                       <Group justify='space-between' align='center' mb='sm' wrap='wrap'>
                         <Title order={4}>Latest progress</Title>
 
-                        <Link
-                          href={`/projects/${projectId}/log/create?backTo=${encodeURIComponent(
-                            `/projects/${projectId}#logs`,
-                          )}`}
-                          style={{ textDecoration: 'none' }}
-                        >
-                          <Button variant='light' leftSection={<IconPlus size={16} />}>
-                            Add log
-                          </Button>
-                        </Link>
+                        {isLoggedIn ? (
+                          <Link
+                            href={`/projects/${projectId}/log/create?backTo=${encodeURIComponent(
+                              `/projects/${projectId}#logs`,
+                            )}`}
+                            style={{ textDecoration: 'none' }}
+                          >
+                            <Button variant='light' leftSection={<IconPlus size={16} />}>
+                              Add log
+                            </Button>
+                          </Link>
+                        ) : null}
                       </Group>
 
                       {project.logEntries?.length ? (

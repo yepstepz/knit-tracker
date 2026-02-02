@@ -8,7 +8,7 @@ type Args = {
     kind: 'edit' | 'create';
   };
   initialForm: Partial<LogEntry>;
-  values: Omit<LogEntry, 'id'>;
+  values: Omit<LogEntry, 'id' | 'happenedAt'> & { happenedAt?: string };
 };
 
 export async function save({
@@ -19,12 +19,11 @@ export async function save({
 }: Args): Promise<{ logEntryId: string; goTo: string }> {
   let logEntryId = initialForm.id || '';
   const projectId = project.id;
-  console.log({ values });
 
   const { photo, ...restValues } = values;
 
   if (mode.kind === 'create') {
-    const { id } = await apiPostWithResponse(`/api/projects/${projectId}/log`, {
+    const { id } = await apiPostWithResponse<{ id: string }>(`/api/projects/${projectId}/log`, {
       ...restValues,
     });
     logEntryId = id;
@@ -36,14 +35,12 @@ export async function save({
 
   const { toDelete, toCreate, toPatch } = diffPhotos([initialForm.photo], [photo]);
 
-  console.log({ toDelete, toCreate, toPatch });
-
   await processPhotos({ toDelete, toCreate, toPatch, projectId, logEntryId });
 
   // POST projects/{{projectIdForPatch}}/log
   // POST /api/projects/{{projectIdForPatch}}/log/{{logEntryId2}}/photos
   // PATCH projects/{{projectId}}/log/{{logEntryId2}}
 
-  // PATCH {{baseUrl}}/api/photos/{{photoId}}
-  return;
+  const goTo = `/projects/${projectId}/log/${logEntryId}`;
+  return { logEntryId, goTo };
 }

@@ -1,7 +1,7 @@
 // src/app/_components/Form/project/actions/save.ts
 import { apiDelete, apiPatch, apiPost, apiPostWithResponse } from '@/app/_lib/request';
-import { ProjectFormMode } from '@/app/_components/Form/project/types';
-import { ProjectDetail, Tag, Photo } from '@/types';
+import { ProjectFormMode, ProjectFormValues } from '@/app/_components/Form/project/types';
+import { ProjectDetail, Tag } from '@/types';
 import {
   collectTags,
   diffPhotos,
@@ -11,18 +11,9 @@ import {
 
 type Args = {
   mode: ProjectFormMode;
-  initialProject: ProjectDetail;
-  initialTags: Tag[];
-  values: {
-    title: string;
-    status: string;
-    startedAt: string | null;
-    finishedAt: string | null;
-    archived: boolean;
-    tags: Tag['name'][];
-    photos: Photo[];
-    cover: Photo;
-  };
+  initialProject: Partial<ProjectDetail>;
+  allTags: Tag[];
+  values: ProjectFormValues;
 };
 
 const toggleArchive = async ({
@@ -31,11 +22,11 @@ const toggleArchive = async ({
   values,
 }: {
   mode: ProjectFormMode;
-  initialProject: ProjectDetail;
+  initialProject: Partial<ProjectDetail>;
   values: Args['values'];
 }) => {
   if (mode!.kind === 'edit') {
-    const initialArchivedAt = initialProject!.archivedAt;
+    const initialArchivedAt = initialProject.archivedAt ?? null;
     const wasArchived = !!initialArchivedAt;
     const wantArchived = values!.archived;
 
@@ -46,10 +37,18 @@ const toggleArchive = async ({
   }
 };
 
-const addTags = async ({ nextTags, initialProject, allTags }) => {
-  const initialTags = initialProject.tags.map((t) => t.name);
-  const mappedTags = new Map();
-  allTags.forEach((tag) => {
+const addTags = async ({
+  nextTags,
+  initialProject,
+  allTags,
+}: {
+  nextTags: string[];
+  initialProject: Partial<ProjectDetail>;
+  allTags: Tag[];
+}) => {
+  const initialTags = (initialProject.tags as Tag[] | undefined)?.map((t) => t.name) ?? [];
+  const mappedTags = new Map<string, Tag>();
+  allTags.forEach((tag: Tag) => {
     mappedTags.set(tag.name, tag);
   });
   const projectId = initialProject.id;
@@ -71,14 +70,14 @@ export async function save({
   allTags,
   values,
 }: Args): Promise<{ projectId: string; goTo: string }> {
-  const title = values.title.trim() || 'Untitled project';
+  const normalizedTitle = values.title.trim() || 'Untitled project';
 
   let projectId = mode.kind === 'edit' ? mode.projectId : '';
 
-  const { tags, archived, cover, photos, ...restValues } = values;
+  const { title, tags, archived, cover, photos, ...restValues } = values;
 
   const { toDelete, toCreate, toPatch } = diffPhotos(
-    unifyPhotos(initialProject.cover, initialProject.photos),
+    unifyPhotos(initialProject.cover, initialProject.photos ?? []),
     unifyPhotos(cover, photos),
   );
 
@@ -86,13 +85,13 @@ export async function save({
 
   if (mode.kind === 'create') {
     const created = await apiPostWithResponse<{ id: string }>(`/api/projects`, {
-      title,
+      title: normalizedTitle,
       ...restValues,
     });
     projectId = created.id;
   } else {
     await apiPatch(`/api/projects/${projectId}`, {
-      title,
+      title: normalizedTitle,
       ...restValues,
     });
   }

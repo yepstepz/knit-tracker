@@ -8,19 +8,21 @@ export default async function ProjectPage({ params }: { params: Promise<{ projec
 
   const projectApi = await apiGet<ProjectDetail>(`/api/projects/${projectId}`);
 
+  const toLabel = (v: string | null | undefined) => fmtDate(v) ?? '—';
+
   const logs = projectApi.logEntries.map((log) => ({
     ...log,
     contentMd: log.contentMd.trim(),
-    happenedAt: fmtDate(log.happenedAt),
+    happenedAt: toLabel(log.happenedAt),
   }));
 
   const project = {
     ...projectApi,
-    createdAt: fmtDate(projectApi.createdAt),
-    updatedAt: fmtDate(projectApi.updatedAt),
-    startedAt: fmtDate(projectApi.startedAt),
-    finishedAt: fmtDate(projectApi.finishedAt),
-    archivedAt: fmtDate(projectApi.archivedAt),
+    createdAt: toLabel(projectApi.createdAt),
+    updatedAt: toLabel(projectApi.updatedAt),
+    startedAt: toLabel(projectApi.startedAt),
+    finishedAt: toLabel(projectApi.finishedAt),
+    archivedAt: toLabel(projectApi.archivedAt),
     logEntries: logs,
   };
 

@@ -8,7 +8,6 @@ export default function EditLogClient(props: {
   project: ProjectDetail;
   logEntryId: string;
   log: LogEntry;
-  redirectTo: string;
 }) {
   const { logEntryId, project, log } = props;
   return (

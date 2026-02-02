@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import { useContext } from 'react';
 import {
   Button,
   Card,
@@ -14,6 +15,7 @@ import {
   Title,
 } from '@mantine/core';
 import { IconArrowLeft, IconPlus } from '@tabler/icons-react';
+import { UserContext } from '@/app/_components/UserProvider/user-context';
 
 function buildHref(basePath: string, page: number, limit: string) {
   const sp = new URLSearchParams();
@@ -50,8 +52,10 @@ export default function ProjectLogClient({
     preview: string;
   }>;
 }) {
+  const user = useContext(UserContext);
+  const isLoggedIn = !!user;
   return (
-    <Container size={900} py='xl'>
+    <Container size={1000} py='xl'>
       <Stack gap='lg'>
         <Group justify='space-between' align='center' wrap='wrap' gap='md'>
           <Link href={`/projects/${projectId}`} style={{ textDecoration: 'none' }}>
@@ -60,12 +64,14 @@ export default function ProjectLogClient({
             </Button>
           </Link>
 
-          <Link
-            href={`/projects/${projectId}/log/create?backTo=${encodeURIComponent(backTo)}`}
-            style={{ textDecoration: 'none' }}
-          >
-            <Button leftSection={<IconPlus size={16} />}>Add log</Button>
-          </Link>
+          {isLoggedIn ? (
+            <Link
+              href={`/projects/${projectId}/log/create?backTo=${encodeURIComponent(backTo)}`}
+              style={{ textDecoration: 'none' }}
+            >
+              <Button leftSection={<IconPlus size={16} />}>Add log</Button>
+            </Link>
+          ) : null}
         </Group>
 
         <Stack gap={6}>

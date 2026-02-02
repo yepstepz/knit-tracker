@@ -41,11 +41,9 @@ export default async function Home({
   return (
     <HomeClient
       projects={cards}
-      tags={tagsRes}
       page={projectsRes.page}
       totalPages={projectsRes.totalPages}
       total={projectsRes.total}
-      query={{ page, limit, tagId, archived }}
     />
   );
 }

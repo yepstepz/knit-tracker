@@ -23,7 +23,7 @@ export default async function LogEntryPage({
     notFound();
   }
 
-  const happenedAtLabel = fmtDate(entry.happenedAt);
+  const happenedAtLabel = fmtDate(entry.happenedAt) ?? '—';
 
   return (
     <LogEntryClient

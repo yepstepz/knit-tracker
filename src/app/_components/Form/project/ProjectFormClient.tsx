@@ -33,19 +33,21 @@ import {
   emptyProject,
 } from '@/app/_components/Form/project/const';
 import { normalizeTags } from '../common/utils';
-import { ProjectDetail } from '@/types';
+import { ProjectDetail, Tag } from '@/types';
 import { FormProvider, useFormContext } from './actions/form-context';
 import { FormTopBar } from '@/app/_components/Form/common/FormTopBar';
 import { projectForm } from '@/app/_components/Form/project/actions/form-controller';
 import { Gallery } from './Gallery';
 import { CoverImage } from './Cover';
 
-export function ProjectFormClient(props: {
+type ProjectFormClientProps = {
   mode: ProjectFormMode;
-  project: ProjectDetail;
-  allTags;
+  project?: ProjectDetail;
+  allTags: Tag[];
   backHref: string;
-}) {
+};
+
+export function ProjectFormClient(props: ProjectFormClientProps) {
   const router = useRouter();
   const allTags = props.allTags.map((t) => t.name);
 
@@ -54,7 +56,7 @@ export function ProjectFormClient(props: {
 
   const statusOptions: ProjectStatus[] = [ACTIVE, FINISHED, PAUSED, ABANDONED, IDEA];
 
-  const initialProject = props.project || emptyProject;
+  const initialProject = props.project ?? emptyProject;
   const backUrl = props.backHref;
   const form = projectForm(initialProject);
 
@@ -79,7 +81,7 @@ export function ProjectFormClient(props: {
   return (
     <FormProvider form={form}>
       <Container size={1000} py='xl'>
-        <FormTopBar backHref={backUrl} />
+        <FormTopBar title='Back' backHref={backUrl} />
         <form onSubmit={onSubmit}>
           <Stack gap='md'>
             <Title order={2}>
@@ -137,7 +139,7 @@ export function ProjectFormClient(props: {
                         Добавить фото
                       </Button>
                       <Gallery
-                        photos={form.getInputProps('photos').value}
+                        photos={form.values.photos}
                         context={useFormContext}
                       />
                     </Stack>

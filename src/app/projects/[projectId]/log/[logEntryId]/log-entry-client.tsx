@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import { useContext } from 'react';
 import {
   Button,
   Card,
@@ -17,6 +18,7 @@ import { IconArrowLeft, IconEdit, IconTrash } from '@tabler/icons-react';
 
 import { DeleteLogEntryButton } from '@/app/_components/Form/log/DeleteLogEntryButton';
 import type { LogEntry } from '@/types';
+import { UserContext } from '@/app/_components/UserProvider/user-context';
 
 export default function LogEntryClient({
   projectId,
@@ -33,8 +35,10 @@ export default function LogEntryClient({
   happenedAtLabel: string;
   redirectTo: string;
 }) {
+  const user = useContext(UserContext);
+  const isLoggedIn = !!user;
   return (
-    <Container size={900} py='xl'>
+    <Container size={1000} py='xl'>
       <Stack gap='lg'>
         {/* Top links */}
         <Group justify='space-between' align='center' wrap='wrap' gap='md'>
@@ -95,21 +99,23 @@ export default function LogEntryClient({
         </Paper>
 
         {/* Actions */}
-        <Group justify='space-between' align='center' wrap='wrap'>
-          <DeleteLogEntryButton
-            projectId={projectId}
-            logEntryId={logEntryId}
-            redirectTo={redirectTo}
-          />
-          <Link
-            href={`/projects/${projectId}/log/${logEntryId}/edit`}
-            style={{ textDecoration: 'none' }}
-          >
-            <Button variant='light' leftSection={<IconEdit size={16} />}>
-              Edit log
-            </Button>
-          </Link>
-        </Group>
+        {isLoggedIn ? (
+          <Group justify='space-between' align='center' wrap='wrap'>
+            <DeleteLogEntryButton
+              projectId={projectId}
+              logEntryId={logEntryId}
+              redirectTo={redirectTo}
+            />
+            <Link
+              href={`/projects/${projectId}/log/${logEntryId}/edit`}
+              style={{ textDecoration: 'none' }}
+            >
+              <Button variant='light' leftSection={<IconEdit size={16} />}>
+                Edit log
+              </Button>
+            </Link>
+          </Group>
+        ) : null}
       </Stack>
     </Container>
   );
