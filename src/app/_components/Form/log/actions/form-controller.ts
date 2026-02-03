@@ -8,7 +8,7 @@ export const logEntryForm = (logEntry: Partial<LogEntry>) => {
       title: logEntry.title ?? '',
       happenedAt: logEntry.happenedAt ?? undefined,
       contentMd: logEntry.contentMd ?? '',
-      photo: logEntry.photo ?? null,
+      photo: logEntry.photo ?? { uri: '', caption: '', alt: '' },
     },
     transformValues: (values) => ({
       ...values,

@@ -30,7 +30,6 @@ import {
   FINISHED,
   ABANDONED,
   defaultCover,
-  emptyProject,
 } from '@/app/_components/Form/project/const';
 import { normalizeTags } from '../common/utils';
 import { ProjectDetail, Tag } from '@/types';
@@ -56,7 +55,7 @@ export function ProjectFormClient(props: ProjectFormClientProps) {
 
   const statusOptions: ProjectStatus[] = [ACTIVE, FINISHED, PAUSED, ABANDONED, IDEA];
 
-  const initialProject = props.project ?? emptyProject;
+  const initialProject: Partial<ProjectDetail> = props.project ?? {};
   const backUrl = props.backHref;
   const form = projectForm(initialProject);
 

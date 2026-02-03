@@ -1,6 +1,11 @@
 import { prisma } from '@/lib/prisma';
 import { PhotoRole, ProjectStatus } from '@prisma/client';
 import { ok, created, badRequest } from '@/server/helpers/http';
+import {
+  revalidateProjectsList,
+  revalidateProjectDetail,
+  revalidateTagsImpact,
+} from '@/lib/cache-paths';
 
 const DEFAULT_LIMIT = 10;
 const MAX_LIMIT = 50;
@@ -93,6 +98,9 @@ export async function POST(req: Request) {
       yarnPlan: typeof body?.yarnPlan === 'string' ? body.yarnPlan : '',
     },
   });
+
+  revalidateProjectsList();
+  revalidateProjectDetail(project.id);
 
   return created(project);
 }

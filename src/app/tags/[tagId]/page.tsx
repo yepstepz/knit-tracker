@@ -1,5 +1,5 @@
 import { notFound } from 'next/navigation';
-import { apiGet } from '@/app/_lib/request';
+import { apiGetCached } from '@/app/_lib/request';
 import { qs } from '@/app/_lib/qs';
 import type { Tag, Paginated, ProjectDetail } from '@/types';
 import TagPageClient from './tag-page-client';
@@ -19,8 +19,10 @@ export default async function TagPage({
   const archived = sp.archived === '1' ? '1' : undefined;
 
   const [tags, projectsRes] = await Promise.all([
-    apiGet<Tag[]>(`/api/tags`),
-    apiGet<Paginated<ProjectDetail>>(`/api/projects${qs({ page, limit, tagId, archived })}`),
+    apiGetCached<Tag[]>(`/api/tags`, { revalidate: 60 * 60 * 24 * 30 }),
+    apiGetCached<Paginated<ProjectDetail>>(`/api/projects${qs({ page, limit, tagId, archived })}`, {
+      revalidate: 60 * 60 * 24 * 7,
+    }),
   ]);
 
   const tag = tags.find((t) => t.id === tagId);

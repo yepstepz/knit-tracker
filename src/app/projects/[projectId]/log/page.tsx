@@ -1,4 +1,4 @@
-import { apiGet } from '@/app/_lib/request';
+import { apiGetCached } from '@/app/_lib/request';
 import { qs } from '@/app/_lib/qs';
 import { fmtDate, markdownPreview } from '@/app/_lib/format';
 import type { LogEntry, Paginated, ProjectDetail } from '@/types';
@@ -18,9 +18,12 @@ export default async function ProjectLogPage({
   const limit = sp.limit ?? '10';
 
   const [project, logs] = await Promise.all([
-    apiGet<ProjectDetail>(`/api/projects/${projectId}`),
-    apiGet<Paginated<LogEntry>>(
+    apiGetCached<ProjectDetail>(`/api/projects/${projectId}`, {
+      revalidate: 60 * 60 * 24 * 7,
+    }),
+    apiGetCached<Paginated<LogEntry>>(
       `/api/projects/${projectId}/log${qs({ page: String(page), limit })}`,
+      { revalidate: 60 * 60 * 24 },
     ),
   ]);
 

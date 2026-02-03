@@ -1,6 +1,7 @@
 import 'server-only';
 import { prisma } from '@/lib/prisma';
 import { ok, badRequest, notFound } from '@/server/helpers/http';
+import { revalidateTagsImpact } from '@/lib/cache-paths';
 
 export async function DELETE(
   _req: Request,
@@ -24,6 +25,8 @@ export async function DELETE(
     include: { tag: true },
     orderBy: { createdAt: 'asc' },
   });
+
+  revalidateTagsImpact({ projectId, tagId });
 
   return ok(links.map((x) => x.tag));
 }

@@ -1,7 +1,6 @@
 import { notFound } from 'next/navigation';
 import { apiGet } from '@/app/_lib/request';
 import type { Tag } from '@/types';
-
 import CreateProjectClient from '@/app/projects/create/create-project-client';
 
 export default async function CreateProjectPage() {

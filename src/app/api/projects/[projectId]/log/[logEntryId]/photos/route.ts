@@ -1,5 +1,6 @@
 import { getLogEntryPhotos } from '../_lib/getLogEntryPhotos';
 import { addLogEntryPhoto } from '../_lib/addLogEntryPhoto';
+import { revalidateLogsList, revalidateProjectDetail } from '@/lib/cache-paths';
 
 export async function GET(
   _req: Request,
@@ -15,5 +16,8 @@ export async function POST(
 ) {
   const { projectId, logEntryId } = await ctx.params;
   const body = await req.json().catch(() => null);
-  return addLogEntryPhoto(projectId, logEntryId, body);
+  const res = await addLogEntryPhoto(projectId, logEntryId, body);
+  revalidateLogsList(projectId);
+  revalidateProjectDetail(projectId);
+  return res;
 }

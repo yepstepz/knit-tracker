@@ -14,6 +14,6 @@ export type ProjectFormValues = {
   tags: string[];
   descriptionMd: string;
   yarnPlan: string;
-  cover: ImageValue | null;
+  cover: ImageValue;
   photos: ImageValue[];
 };

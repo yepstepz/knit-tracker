@@ -3,6 +3,7 @@ import { prisma } from '@/lib/prisma';
 import { ok, badRequest, notFound } from '@/server/helpers/http';
 import { isPhotoRole } from '@/server/helpers/photo';
 import { PhotoRole } from '@prisma/client';
+import { revalidateProjectsList, revalidateProjectDetail, revalidateLogsList } from '@/lib/cache-paths';
 
 type Body = Partial<{
   uri: string;
@@ -85,9 +86,20 @@ export async function editPhoto(photoId: string, body: unknown) {
       data,
     });
 
-    return tx.photo.findUnique({ where: { id: photoId } });
+    const updated = await tx.photo.findUnique({ where: { id: photoId } });
+    return { updated, current };
   });
 
   if (!result) return notFound();
-  return ok(result);
+
+  if (result.current.projectId) {
+    revalidateProjectsList();
+    revalidateProjectDetail(result.current.projectId);
+  }
+  if (result.current.logEntryId) {
+    revalidateLogsList(result.current.projectId ?? null);
+    revalidateProjectDetail(result.current.projectId ?? null);
+  }
+
+  return ok(result.updated);
 }

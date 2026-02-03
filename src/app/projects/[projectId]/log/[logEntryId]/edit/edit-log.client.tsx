@@ -2,7 +2,15 @@
 
 import { LogEntry, ProjectDetail, Tag } from '@/types';
 
-import { LogEntryFormClient } from '@/app/_components/Form/log/LogEntryFormClient';
+import dynamic from 'next/dynamic';
+
+const LogEntryFormClient = dynamic(
+  () =>
+    import('@/app/_components/Form/log/LogEntryFormClient').then((mod) => mod.LogEntryFormClient),
+  {
+    ssr: false,
+  },
+);
 
 export default function EditLogClient(props: {
   project: ProjectDetail;

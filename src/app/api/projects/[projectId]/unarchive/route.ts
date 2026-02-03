@@ -1,6 +1,7 @@
 import 'server-only';
 import { prisma } from '@/lib/prisma';
 import { ok, badRequest, notFound } from '@/server/helpers/http';
+import { revalidateProjectsList, revalidateProjectDetail } from '@/lib/cache-paths';
 
 export async function POST(_req: Request, ctx: { params: Promise<{ projectId: string }> }) {
   const { projectId } = await ctx.params;
@@ -11,6 +12,8 @@ export async function POST(_req: Request, ctx: { params: Promise<{ projectId: st
       where: { id: projectId },
       data: { archivedAt: null },
     });
+    revalidateProjectsList();
+    revalidateProjectDetail(projectId);
     return ok({ ok: true });
   } catch {
     return notFound('project not found');

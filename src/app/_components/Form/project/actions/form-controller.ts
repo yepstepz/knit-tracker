@@ -5,12 +5,12 @@ import type { ProjectFormValues } from '@/app/_components/Form/project/types';
 import type { ImageValue } from '@/app/_components/Form/common/ImageField/utils';
 import { useForm } from './form-context';
 
-const normalizePhoto = (photo?: Photo | null): ImageValue => ({
+const normalizePhoto = (photo?: Photo | null, role?: ImageValue['role']): ImageValue => ({
   id: photo?.id,
   uri: photo?.uri ?? '',
   caption: photo?.caption ?? '',
   alt: photo?.alt ?? '',
-  role: (photo?.role ?? undefined) as ImageValue['role'],
+  role: (photo?.role ?? role ?? undefined) as ImageValue['role'],
 });
 
 export const projectForm = (project: Partial<ProjectDetail>) => {
@@ -19,13 +19,13 @@ export const projectForm = (project: Partial<ProjectDetail>) => {
     initialValues: {
       title: project.title ?? '',
       status: (project.status ?? ACTIVE) as ProjectStatus,
-      archived: project.archivedAt !== null,
+      archived: project.archivedAt != null,
       startedAt: project.startedAt ?? null,
       finishedAt: project.finishedAt ?? null,
       tags: (project.tags ?? []).map((t: Tag) => t.name),
       descriptionMd: project.descriptionMd ?? '',
       yarnPlan: project.yarnPlan ?? '',
-      cover: project.cover ? normalizePhoto(project.cover) : null,
+      cover: project.cover ? normalizePhoto(project.cover, 'COVER') : normalizePhoto(null, 'COVER'),
       photos: (project.photos ?? []).map((photo) => normalizePhoto(photo)),
     },
     validate: {

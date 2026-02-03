@@ -10,7 +10,7 @@ export type ImageValue = {
 };
 
 export type ImageFieldProjectValues = {
-  cover: ImageValue | null;
+  cover: ImageValue;
   photos?: ImageValue[];
 };
 

@@ -1,6 +1,7 @@
 import 'server-only';
 import { prisma } from '@/lib/prisma';
 import { ok, badRequest } from '@/server/helpers/http';
+import { revalidateProjectsList, revalidateTagsImpact } from '@/lib/cache-paths';
 
 export async function GET(_req: Request) {
   const tags = await prisma.tag.findMany({
@@ -29,6 +30,9 @@ export async function POST(req: Request) {
       ...(typeof color !== 'undefined' ? { color } : {}),
     },
   });
+
+  revalidateTagsImpact({ tagId: tag.id });
+  revalidateProjectsList();
 
   return ok(tag, { status: 201 });
 }

@@ -1,6 +1,7 @@
 import { getLogEntry } from './_lib/getLogEntry';
 import { editLogEntry } from './_lib/editLogEntry';
 import { deleteLogEntry } from './_lib/deleteLogEntry';
+import { revalidateLogsList, revalidateProjectDetail } from '@/lib/cache-paths';
 
 export async function GET(
   _req: Request,
@@ -16,7 +17,10 @@ export async function PATCH(
 ) {
   const { projectId, logEntryId } = await ctx.params;
   const body = await req.json().catch(() => null);
-  return editLogEntry(projectId, logEntryId, body);
+  const res = await editLogEntry(projectId, logEntryId, body);
+  revalidateLogsList(projectId);
+  revalidateProjectDetail(projectId);
+  return res;
 }
 
 export async function DELETE(
@@ -24,5 +28,8 @@ export async function DELETE(
   ctx: { params: Promise<{ projectId: string; logEntryId: string }> },
 ) {
   const { projectId, logEntryId } = await ctx.params;
-  return deleteLogEntry(projectId, logEntryId);
+  const res = await deleteLogEntry(projectId, logEntryId);
+  revalidateLogsList(projectId);
+  revalidateProjectDetail(projectId);
+  return res;
 }

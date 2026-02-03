@@ -86,9 +86,11 @@ function Photos({ photos, titleFallback }: { photos: Photo[]; titleFallback: str
 export function ProjectPageClient({
   projectId,
   project,
+  isArchived,
 }: {
   projectId: string;
   project: ProjectDetail;
+  isArchived: boolean;
 }) {
   const user = useContext(UserContext);
   const isLoggedIn = !!user;
@@ -98,7 +100,7 @@ export function ProjectPageClient({
   const overviewRows = [
     {
       k: 'State',
-      v: project.archivedAt ? (
+      v: isArchived ? (
         <Badge color='red' variant='light' radius='sm'>
           Archived
         </Badge>
@@ -120,7 +122,7 @@ export function ProjectPageClient({
     { k: 'Updated', v: project.updatedAt },
     { k: 'Started', v: project.startedAt },
     { k: 'Finished', v: project.finishedAt },
-    { k: 'Archived', v: project.archivedAt },
+    { k: 'Archived', v: isArchived ? project.archivedAt : '—' },
   ];
 
   return (

@@ -1,4 +1,4 @@
-import { apiGet } from '@/app/_lib/request';
+import { apiGetCached } from '@/app/_lib/request';
 import { qs } from './_lib/qs';
 import { Paginated, ProjectListItem, Tag } from '@/types';
 import { HomeClient } from './home-client';
@@ -27,8 +27,11 @@ export default async function Home({
   const archived = sp.archived === '1' ? '1' : undefined;
 
   const [projectsRes, tagsRes] = await Promise.all([
-    apiGet<Paginated<ProjectListItem>>(`/api/projects${qs({ page, limit, tagId, archived })}`),
-    apiGet<Tag[]>(`/api/tags`),
+    apiGetCached<Paginated<ProjectListItem>>(
+      `/api/projects${qs({ page, limit, tagId, archived })}`,
+      { revalidate: 60 * 60 * 24 * 7 },
+    ),
+    apiGetCached<Tag[]>(`/api/tags`, { revalidate: 60 * 60 * 24 * 30 }),
   ]);
 
   const hrefForPage = (p: number) => `/${qs({ page: String(p), limit, tagId, archived })}`;

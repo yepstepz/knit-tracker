@@ -1,5 +1,6 @@
 import { prisma } from '@/lib/prisma';
 import { ok } from '@/server/helpers/http';
+import { revalidateProjectsList, revalidateProjectDetail } from '@/lib/cache-paths';
 
 export async function POST(_req: Request, ctx: { params: Promise<{ projectId: string }> }) {
   const { projectId } = await ctx.params;
@@ -9,6 +10,9 @@ export async function POST(_req: Request, ctx: { params: Promise<{ projectId: st
     data: { archivedAt: new Date() },
     select: { id: true, archivedAt: true },
   });
+
+  revalidateProjectsList();
+  revalidateProjectDetail(projectId);
 
   return ok(project);
 }

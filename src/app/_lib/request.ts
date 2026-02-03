@@ -1,8 +1,12 @@
 import { apiFetch } from './apiFetch';
 
 export const apiGet = <T>(path: string) => apiFetch<T>(path, { method: 'GET' });
-export const apiGetCached = <T>(path: string, revalidate = 60 * 60 * 24) =>
-  apiFetch<T>(path, { method: 'GET', cache: 'force-cache', next: { revalidate } });
+export const apiGetCached = <T>(path: string, opts: { revalidate: number }) =>
+  apiFetch<T>(path, {
+    method: 'GET',
+    cache: 'force-cache',
+    next: { revalidate: opts.revalidate },
+  });
 
 export const apiDelete = (path: string) => apiFetch<void>(path, { method: 'DELETE', noBody: true });
 

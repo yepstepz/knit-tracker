@@ -1,6 +1,6 @@
 import type { ProjectStatus } from '@prisma/client';
 import type { ImageValue } from '@/app/_components/Form/common/ImageField/utils';
-import { ProjectDetail } from '@/types';
+import type { ProjectDetail } from '@/types';
 
 export const IDEA = 'IDEA';
 export const ACTIVE = 'ACTIVE';
@@ -14,19 +14,6 @@ export const projectStatus = {
   PAUSED,
   FINISHED,
   ABANDONED,
-};
-
-export const emptyProject = {
-  title: '',
-  status: IDEA as ProjectStatus,
-  archived: false,
-  startedAt: null,
-  finishedAt: null,
-  tags: [],
-  descriptionMd: '',
-  yarnPlan: '',
-  cover: null,
-  photos: [],
 };
 
 export const defaultCover: ImageValue = { uri: '', caption: '', alt: '', role: 'GALLERY' };

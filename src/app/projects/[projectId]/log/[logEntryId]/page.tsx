@@ -1,5 +1,5 @@
 import { notFound } from 'next/navigation';
-import { apiGet } from '@/app/_lib/request';
+import { apiGetCached } from '@/app/_lib/request';
 import { fmtDate } from '@/app/_lib/format';
 import type { LogEntry, ProjectDetail } from '@/types';
 import LogEntryClient from './log-entry-client';
@@ -16,8 +16,12 @@ export default async function LogEntryPage({
 
   try {
     [project, entry] = await Promise.all([
-      apiGet<ProjectDetail>(`/api/projects/${projectId}`),
-      apiGet<LogEntry>(`/api/projects/${projectId}/log/${logEntryId}`),
+      apiGetCached<ProjectDetail>(`/api/projects/${projectId}`, {
+        revalidate: 60 * 60 * 24 * 7,
+      }),
+      apiGetCached<LogEntry>(`/api/projects/${projectId}/log/${logEntryId}`, {
+        revalidate: 60 * 60 * 24,
+      }),
     ]);
   } catch {
     notFound();

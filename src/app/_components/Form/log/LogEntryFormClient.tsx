@@ -37,7 +37,6 @@ export function LogEntryFormClient(props: LogEntryFormClientProps) {
 
   const router = useRouter();
   const initialForm = props.log || emptyLogEntry;
-  initialForm.photo ??= { uri: '', caption: '', alt: '' };
   const form = logEntryForm(initialForm);
 
   const onSubmit = form.onSubmit(async (values) => {

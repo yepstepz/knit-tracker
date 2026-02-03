@@ -1,7 +1,15 @@
 'use client';
 
 import type { ProjectDetail, Tag } from '@/types';
-import { ProjectFormClient } from '@/app/_components/Form/project/ProjectFormClient';
+import dynamic from 'next/dynamic';
+
+const ProjectFormClient = dynamic(
+  () =>
+    import('@/app/_components/Form/project/ProjectFormClient').then((mod) => mod.ProjectFormClient),
+  {
+    ssr: false,
+  },
+);
 
 export default function EditProjectClient(props: {
   projectId: string;

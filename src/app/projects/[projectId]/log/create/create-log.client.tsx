@@ -1,9 +1,16 @@
 'use client';
 
-import { LogEntry, ProjectDetail, Tag } from '@/types';
+import { ProjectDetail } from '@/types';
 
-import { LogEntryFormClient } from '@/app/_components/Form/log/LogEntryFormClient';
-import { useRouter } from 'next/navigation';
+import dynamic from 'next/dynamic';
+
+const LogEntryFormClient = dynamic(
+  () =>
+    import('@/app/_components/Form/log/LogEntryFormClient').then((mod) => mod.LogEntryFormClient),
+  {
+    ssr: false,
+  },
+);
 
 export default function CreateLogClient(props: { project: ProjectDetail; redirectTo: string }) {
   const { project } = props;

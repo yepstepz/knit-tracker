@@ -1,6 +1,7 @@
 import 'server-only';
 import { prisma } from '@/lib/prisma';
 import { ok, created, badRequest, notFound } from '@/server/helpers/http';
+import { revalidateLogsList, revalidateProjectDetail } from '@/lib/cache-paths';
 
 const DEFAULT_LIMIT = 10;
 const MAX_LIMIT = 50;
@@ -99,6 +100,9 @@ export async function POST(req: Request, ctx: { params: Promise<{ projectId: str
     },
     include: { photo: true },
   });
+
+  revalidateLogsList(projectId);
+  revalidateProjectDetail(projectId);
 
   return created(entry);
 }

@@ -1,6 +1,7 @@
 import 'server-only';
 import { prisma } from '@/lib/prisma';
 import { ok, badRequest, notFound } from '@/server/helpers/http';
+import { revalidateTagsImpact } from '@/lib/cache-paths';
 
 export async function POST(req: Request, ctx: { params: Promise<{ projectId: string }> }) {
   const { projectId } = await ctx.params;
@@ -37,6 +38,8 @@ export async function POST(req: Request, ctx: { params: Promise<{ projectId: str
     include: { tag: true },
     orderBy: { createdAt: 'asc' }, // это createdAt у СВЯЗИ ProjectTag, не у Tag
   });
+
+  revalidateTagsImpact({ projectId, tagId });
 
   return ok(links.map((x) => x.tag));
 }
