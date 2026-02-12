@@ -1,9 +1,11 @@
 import 'server-only';
 import { prisma } from '@/lib/prisma';
-import { ok, badRequest, notFound } from '@/server/helpers/http';
+import { ok, badRequest, notFound, unauthorized } from '@/server/helpers/http';
 import { revalidateTagsImpact } from '@/lib/cache-paths';
+import { requireAuth } from '@/server/helpers/auth';
 
 export async function POST(req: Request, ctx: { params: Promise<{ projectId: string }> }) {
+  if (!requireAuth()) return unauthorized();
   const { projectId } = await ctx.params;
   if (!projectId) return badRequest('[projectId] required');
 

@@ -1,25 +1,9 @@
 import { prisma } from '@/lib/prisma';
 import { PhotoRole, ProjectStatus } from '@prisma/client';
-import { ok, created, badRequest } from '@/server/helpers/http';
-import {
-  revalidateProjectsList,
-  revalidateProjectDetail,
-  revalidateTagsImpact,
-} from '@/lib/cache-paths';
-
-const DEFAULT_LIMIT = 10;
-const MAX_LIMIT = 50;
-
-function parsePositiveInt(value: string | null, fallback: number) {
-  if (value === null) return fallback;
-  const n = Number(value);
-  if (!Number.isInteger(n) || n < 1) return null;
-  return n;
-}
-
-function clamp(n: number, min: number, max: number) {
-  return Math.max(min, Math.min(max, n));
-}
+import { ok, created, badRequest, unauthorized } from '@/server/helpers/http';
+import { clamp, DEFAULT_LIMIT, MAX_LIMIT, parsePositiveInt } from '@/server/helpers/pagination';
+import { revalidateAfterProjectChange, revalidateTagsImpact } from '@/lib/cache-paths';
+import { requireAuth } from '@/server/helpers/auth';
 
 export async function GET(req: Request) {
   const url = new URL(req.url);
@@ -83,6 +67,7 @@ export async function GET(req: Request) {
 }
 
 export async function POST(req: Request) {
+  if (!requireAuth()) return unauthorized();
   const body = await req.json().catch(() => null);
 
   const title = typeof body?.title === 'string' ? body.title.trim() : '';
@@ -99,8 +84,7 @@ export async function POST(req: Request) {
     },
   });
 
-  revalidateProjectsList();
-  revalidateProjectDetail(project.id);
+  revalidateAfterProjectChange(project.id);
 
   return created(project);
 }

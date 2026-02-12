@@ -26,3 +26,15 @@ export function revalidateTagsImpact(opts: { projectId?: string | null; tagId?: 
     revalidatePath(`/tags/${opts.tagId}`);
   }
 }
+
+export function revalidateAfterLogChange(projectId?: string | null, tagId?: string | null) {
+  revalidateLogsList(projectId ?? null);
+  revalidateProjectDetail(projectId ?? null);
+  if (tagId) revalidatePath(`/tags/${tagId}`);
+}
+
+export function revalidateAfterProjectChange(projectId?: string | null, tagId?: string | null) {
+  revalidateProjectsList();
+  revalidateProjectDetail(projectId ?? null);
+  if (tagId) revalidatePath(`/tags/${tagId}`);
+}

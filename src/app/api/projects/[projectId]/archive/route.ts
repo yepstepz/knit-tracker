@@ -1,8 +1,10 @@
 import { prisma } from '@/lib/prisma';
-import { ok } from '@/server/helpers/http';
-import { revalidateProjectsList, revalidateProjectDetail } from '@/lib/cache-paths';
+import { ok, unauthorized } from '@/server/helpers/http';
+import { revalidateAfterProjectChange } from '@/lib/cache-paths';
+import { requireAuth } from '@/server/helpers/auth';
 
 export async function POST(_req: Request, ctx: { params: Promise<{ projectId: string }> }) {
+  if (!requireAuth()) return unauthorized();
   const { projectId } = await ctx.params;
 
   const project = await prisma.project.update({
@@ -11,8 +13,7 @@ export async function POST(_req: Request, ctx: { params: Promise<{ projectId: st
     select: { id: true, archivedAt: true },
   });
 
-  revalidateProjectsList();
-  revalidateProjectDetail(projectId);
+  revalidateAfterProjectChange(projectId);
 
   return ok(project);
 }

@@ -1,19 +1,13 @@
 import 'server-only';
 import { prisma } from '@/lib/prisma';
 import { ok, badRequest, notFound } from '@/server/helpers/http';
+import { toDateOrUndefined } from '@/server/helpers/dates';
 
 type EditLogEntryBody = Partial<{
   title: string;
   contentMd: string | null;
   happenedAt: string; // ISO string
 }>;
-
-function toDateOrUndefined(value: unknown) {
-  if (value === undefined) return undefined; // поле не прислали
-  if (typeof value !== 'string') return null;
-  const d = new Date(value);
-  return Number.isNaN(d.getTime()) ? null : d;
-}
 
 export async function editLogEntry(projectId: string, logEntryId: string, body: unknown) {
   if (!projectId || !logEntryId) {

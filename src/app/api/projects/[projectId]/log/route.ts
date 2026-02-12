@@ -1,28 +1,10 @@
 import 'server-only';
 import { prisma } from '@/lib/prisma';
-import { ok, created, badRequest, notFound } from '@/server/helpers/http';
-import { revalidateLogsList, revalidateProjectDetail } from '@/lib/cache-paths';
-
-const DEFAULT_LIMIT = 10;
-const MAX_LIMIT = 50;
-
-function toDateOrUndefined(value: unknown) {
-  if (value === undefined) return undefined;
-  if (typeof value !== 'string') return null;
-  const d = new Date(value);
-  return Number.isNaN(d.getTime()) ? null : d;
-}
-
-function parsePositiveInt(value: string | null, fallback: number) {
-  if (value === null) return fallback;
-  const n = Number(value);
-  if (!Number.isInteger(n) || n < 1) return null;
-  return n;
-}
-
-function clamp(n: number, min: number, max: number) {
-  return Math.max(min, Math.min(max, n));
-}
+import { ok, created, badRequest, notFound, unauthorized } from '@/server/helpers/http';
+import { toDateOrUndefined } from '@/server/helpers/dates';
+import { clamp, DEFAULT_LIMIT, MAX_LIMIT, parsePositiveInt } from '@/server/helpers/pagination';
+import { revalidateAfterLogChange } from '@/lib/cache-paths';
+import { requireAuth } from '@/server/helpers/auth';
 
 export async function GET(req: Request, ctx: { params: Promise<{ projectId: string }> }) {
   const { projectId } = await ctx.params;
@@ -69,6 +51,7 @@ export async function GET(req: Request, ctx: { params: Promise<{ projectId: stri
 }
 
 export async function POST(req: Request, ctx: { params: Promise<{ projectId: string }> }) {
+  if (!requireAuth()) return unauthorized();
   const { projectId } = await ctx.params;
   if (!projectId) return badRequest('[projectId] required');
 
@@ -101,8 +84,7 @@ export async function POST(req: Request, ctx: { params: Promise<{ projectId: str
     include: { photo: true },
   });
 
-  revalidateLogsList(projectId);
-  revalidateProjectDetail(projectId);
+  revalidateAfterLogChange(projectId);
 
   return created(entry);
 }
