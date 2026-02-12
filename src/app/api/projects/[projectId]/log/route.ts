@@ -75,10 +75,10 @@ export async function POST(req: Request, ctx: { params: Promise<{ projectId: str
   const body = await req.json().catch(() => null);
 
   const title = typeof body?.title === 'string' ? body.title.trim() : '';
-  if (!title) return badRequest('title required');
 
   const contentMd =
     body?.contentMd === null ? '' : typeof body?.contentMd === 'string' ? body.contentMd : '';
+  if (!contentMd.trim()) return badRequest('contentMd required');
 
   const happenedAtParsed = toDateOrUndefined(body?.happenedAt);
   if (happenedAtParsed === null) {

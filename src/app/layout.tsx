@@ -5,12 +5,15 @@ import '@mantine/dates/styles.css';
 
 import { ColorSchemeScript, MantineProvider, mantineHtmlProps } from '@mantine/core';
 import { ModalsProvider } from '@mantine/modals';
-import { UserPanel } from '@/app/_components/UserPanel';
 import { UserProvider } from '@/app/_components/UserProvider';
+import { Header } from '@/app/_components/Header';
 
 export const metadata = {
   title: 'My Mantine app',
   description: 'I have followed setup instructions carefully',
+  icons: {
+    icon: '/logo.png',
+  },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
@@ -22,7 +25,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body>
         <UserProvider>
           <MantineProvider>
-            <UserPanel />
+            <Header />
             <ModalsProvider>{children}</ModalsProvider>
           </MantineProvider>
         </UserProvider>

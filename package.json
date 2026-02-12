@@ -31,7 +31,8 @@
     "pg": "^8.17.0",
     "prisma": "^7.2.0",
     "react": "19.2.3",
-    "react-dom": "19.2.3"
+    "react-dom": "19.2.3",
+    "tsx": "4.21.0"
   },
   "devDependencies": {
     "@types/node": "^20",
@@ -44,7 +45,6 @@
     "postcss-preset-mantine": "^1.18.0",
     "postcss-simple-vars": "^7.0.1",
     "prettier": "^3.8.1",
-    "tsx": "^4.21.0",
     "typescript": "^5"
   }
 }

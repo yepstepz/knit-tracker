@@ -15,7 +15,7 @@ export const logEntryForm = (logEntry: Partial<LogEntry>) => {
       happenedAt: values.happenedAt?.length ? values.happenedAt : undefined,
     }),
     validate: {
-      title: (v) => (v.trim() ? null : 'Title is required'),
+      contentMd: (v) => (v.trim() ? null : 'Description is required'),
     },
   });
 };

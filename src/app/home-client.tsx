@@ -60,7 +60,7 @@ export function HomeClient({
         <Stack gap='md'>
           <Group justify='space-between' align='center' wrap='wrap' gap='md'>
             <Stack gap={4}>
-              <Title order={1} fw={800}>
+              <Title order={2} fw={700}>
                 Projects
               </Title>
               <Text c='dimmed' size='sm'>

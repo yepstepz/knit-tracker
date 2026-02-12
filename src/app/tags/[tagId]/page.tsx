@@ -28,8 +28,6 @@ export default async function TagPage({
   const tag = tags.find((t) => t.id === tagId);
   if (!tag) return notFound();
 
-  const hrefForPage = (p: number) => `/tags/${tagId}${qs({ page: String(p), limit, archived })}`;
-
   return (
     <TagPageClient
       tagId={tagId}
@@ -38,7 +36,7 @@ export default async function TagPage({
       total={projectsRes.total}
       page={projectsRes.page}
       totalPages={projectsRes.totalPages}
-      hrefForPage={hrefForPage}
+      limit={limit}
       projects={projectsRes.items}
     />
   );

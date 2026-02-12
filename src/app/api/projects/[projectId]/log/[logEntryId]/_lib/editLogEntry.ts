@@ -29,13 +29,15 @@ export async function editLogEntry(projectId: string, logEntryId: string, body: 
 
   if ('title' in b) {
     const title = typeof b.title === 'string' ? b.title.trim() : '';
-    if (!title) return badRequest('title must be non-empty');
     data.title = title;
   }
 
   if ('contentMd' in b) {
     if (b.contentMd !== null && typeof b.contentMd !== 'string') {
       return badRequest('contentMd must be string or null');
+    }
+    if (!String(b.contentMd ?? '').trim()) {
+      return badRequest('contentMd must be non-empty');
     }
     data.contentMd = b.contentMd ?? '';
   }

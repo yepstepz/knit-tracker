@@ -4,6 +4,10 @@ export function revalidateProjectsList() {
   revalidatePath('/');
 }
 
+export function revalidateTagsList() {
+  revalidatePath('/tags');
+}
+
 export function revalidateProjectDetail(projectId?: string | null) {
   if (!projectId) return;
   revalidatePath(`/projects/${projectId}`);
@@ -16,6 +20,7 @@ export function revalidateLogsList(projectId?: string | null) {
 
 export function revalidateTagsImpact(opts: { projectId?: string | null; tagId?: string | null }) {
   revalidateProjectsList();
+  revalidateTagsList();
   revalidateProjectDetail(opts.projectId ?? null);
   if (opts.tagId) {
     revalidatePath(`/tags/${opts.tagId}`);
