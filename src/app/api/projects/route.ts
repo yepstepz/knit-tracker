@@ -1,9 +1,9 @@
 import { prisma } from '@/lib/prisma';
 import { PhotoRole, ProjectStatus } from '@prisma/client';
-import { ok, created, badRequest, unauthorized } from '@/server/helpers/http';
+import { ok, created, badRequest } from '@/server/helpers/http';
 import { clamp, DEFAULT_LIMIT, MAX_LIMIT, parsePositiveInt } from '@/server/helpers/pagination';
 import { revalidateAfterProjectChange, revalidateTagsImpact } from '@/lib/cache-paths';
-import { requireAuth } from '@/server/helpers/auth';
+import { withAuth } from '@/server/helpers/auth';
 
 export async function GET(req: Request) {
   const url = new URL(req.url);
@@ -66,8 +66,7 @@ export async function GET(req: Request) {
   });
 }
 
-export async function POST(req: Request) {
-  if (!requireAuth()) return unauthorized();
+export const POST = withAuth(async (req: Request) => {
   const body = await req.json().catch(() => null);
 
   const title = typeof body?.title === 'string' ? body.title.trim() : '';
@@ -87,4 +86,4 @@ export async function POST(req: Request) {
   revalidateAfterProjectChange(project.id);
 
   return created(project);
-}
+});

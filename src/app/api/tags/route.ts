@@ -1,8 +1,8 @@
 import 'server-only';
 import { prisma } from '@/lib/prisma';
-import { ok, badRequest, unauthorized } from '@/server/helpers/http';
+import { ok, badRequest } from '@/server/helpers/http';
 import { revalidateTagsImpact } from '@/lib/cache-paths';
-import { requireAuth } from '@/server/helpers/auth';
+import { withAuth } from '@/server/helpers/auth';
 
 export async function GET(_req: Request) {
   const tags = await prisma.tag.findMany({
@@ -11,8 +11,7 @@ export async function GET(_req: Request) {
   return ok(tags);
 }
 
-export async function POST(req: Request) {
-  if (!requireAuth()) return unauthorized();
+export const POST = withAuth(async (req: Request) => {
   const body = await req.json().catch(() => null);
 
   const name = typeof body?.name === 'string' ? body.name.trim() : '';
@@ -36,4 +35,4 @@ export async function POST(req: Request) {
   revalidateTagsImpact({ tagId: tag.id });
 
   return ok(tag, { status: 201 });
-}
+});

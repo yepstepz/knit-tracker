@@ -1,8 +1,7 @@
 import { getLogEntryPhotos } from '../_lib/getLogEntryPhotos';
 import { addLogEntryPhoto } from '../_lib/addLogEntryPhoto';
 import { revalidateAfterLogChange } from '@/lib/cache-paths';
-import { requireAuth } from '@/server/helpers/auth';
-import { unauthorized } from '@/server/helpers/http';
+import { withAuth } from '@/server/helpers/auth';
 
 export async function GET(
   _req: Request,
@@ -12,14 +11,13 @@ export async function GET(
   return getLogEntryPhotos(projectId, logEntryId);
 }
 
-export async function POST(
+export const POST = withAuth(async (
   req: Request,
   ctx: { params: Promise<{ projectId: string; logEntryId: string }> },
-) {
-  if (!requireAuth()) return unauthorized();
+) => {
   const { projectId, logEntryId } = await ctx.params;
   const body = await req.json().catch(() => null);
   const res = await addLogEntryPhoto(projectId, logEntryId, body);
   revalidateAfterLogChange(projectId);
   return res;
-}
+});

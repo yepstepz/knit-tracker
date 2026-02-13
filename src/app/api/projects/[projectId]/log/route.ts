@@ -1,10 +1,10 @@
 import 'server-only';
 import { prisma } from '@/lib/prisma';
-import { ok, created, badRequest, notFound, unauthorized } from '@/server/helpers/http';
+import { ok, created, badRequest, notFound } from '@/server/helpers/http';
 import { toDateOrUndefined } from '@/server/helpers/dates';
 import { clamp, DEFAULT_LIMIT, MAX_LIMIT, parsePositiveInt } from '@/server/helpers/pagination';
 import { revalidateAfterLogChange } from '@/lib/cache-paths';
-import { requireAuth } from '@/server/helpers/auth';
+import { withAuth } from '@/server/helpers/auth';
 
 export async function GET(req: Request, ctx: { params: Promise<{ projectId: string }> }) {
   const { projectId } = await ctx.params;
@@ -50,8 +50,7 @@ export async function GET(req: Request, ctx: { params: Promise<{ projectId: stri
   });
 }
 
-export async function POST(req: Request, ctx: { params: Promise<{ projectId: string }> }) {
-  if (!requireAuth()) return unauthorized();
+export const POST = withAuth(async (req: Request, ctx: { params: Promise<{ projectId: string }> }) => {
   const { projectId } = await ctx.params;
   if (!projectId) return badRequest('[projectId] required');
 
@@ -87,4 +86,4 @@ export async function POST(req: Request, ctx: { params: Promise<{ projectId: str
   revalidateAfterLogChange(projectId);
 
   return created(entry);
-}
+});

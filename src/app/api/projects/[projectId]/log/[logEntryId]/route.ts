@@ -2,8 +2,7 @@ import { getLogEntry } from './_lib/getLogEntry';
 import { editLogEntry } from './_lib/editLogEntry';
 import { deleteLogEntry } from './_lib/deleteLogEntry';
 import { revalidateAfterLogChange } from '@/lib/cache-paths';
-import { requireAuth } from '@/server/helpers/auth';
-import { unauthorized } from '@/server/helpers/http';
+import { withAuth } from '@/server/helpers/auth';
 
 export async function GET(
   _req: Request,
@@ -13,25 +12,23 @@ export async function GET(
   return getLogEntry(projectId, logEntryId);
 }
 
-export async function PATCH(
+export const PATCH = withAuth(async (
   req: Request,
   ctx: { params: Promise<{ projectId: string; logEntryId: string }> },
-) {
-  if (!requireAuth()) return unauthorized();
+) => {
   const { projectId, logEntryId } = await ctx.params;
   const body = await req.json().catch(() => null);
   const res = await editLogEntry(projectId, logEntryId, body);
   revalidateAfterLogChange(projectId);
   return res;
-}
+});
 
-export async function DELETE(
+export const DELETE = withAuth(async (
   _req: Request,
   ctx: { params: Promise<{ projectId: string; logEntryId: string }> },
-) {
-  if (!requireAuth()) return unauthorized();
+) => {
   const { projectId, logEntryId } = await ctx.params;
   const res = await deleteLogEntry(projectId, logEntryId);
   revalidateAfterLogChange(projectId);
   return res;
-}
+});
