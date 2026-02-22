@@ -12,6 +12,11 @@ model Project {
   status        ProjectStatus @default(IDEA)
   descriptionMd String        @default("")
   yarnPlan      String        @default("")
+  needles       String?
+  currentGaugeStitches Int?
+  currentGaugeRows     Int?
+  patternGaugeStitches Int?
+  patternGaugeRows     Int?
   createdAt     DateTime      @default(now())
   updatedAt     DateTime      @updatedAt
   startedAt     DateTime?

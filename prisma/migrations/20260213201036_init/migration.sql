@@ -11,6 +11,11 @@ CREATE TABLE "Project" (
     "status" "ProjectStatus" NOT NULL DEFAULT 'IDEA',
     "descriptionMd" TEXT NOT NULL DEFAULT '',
     "yarnPlan" TEXT NOT NULL DEFAULT '',
+    "needles" TEXT,
+    "currentGaugeStitches" INTEGER,
+    "currentGaugeRows" INTEGER,
+    "patternGaugeStitches" INTEGER,
+    "patternGaugeRows" INTEGER,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
     "startedAt" TIMESTAMP(3),
@@ -68,6 +73,18 @@ CREATE TABLE "Photo" (
     CONSTRAINT "Photo_pkey" PRIMARY KEY ("id")
 );
 
+-- CreateTable
+CREATE TABLE "User" (
+    "id" TEXT NOT NULL,
+    "email" TEXT NOT NULL,
+    "passwordHash" TEXT NOT NULL,
+    "role" TEXT NOT NULL DEFAULT 'admin',
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "User_pkey" PRIMARY KEY ("id")
+);
+
 -- CreateIndex
 CREATE INDEX "Project_status_idx" ON "Project"("status");
 
@@ -91,6 +108,9 @@ CREATE UNIQUE INDEX "Photo_logEntryId_key" ON "Photo"("logEntryId");
 
 -- CreateIndex
 CREATE INDEX "Photo_projectId_idx" ON "Photo"("projectId");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "User_email_key" ON "User"("email");
 
 -- AddForeignKey
 ALTER TABLE "Project" ADD CONSTRAINT "Project_basedOnProjectId_fkey" FOREIGN KEY ("basedOnProjectId") REFERENCES "Project"("id") ON DELETE SET NULL ON UPDATE CASCADE;

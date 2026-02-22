@@ -83,6 +83,13 @@ function Photos({ photos, titleFallback }: { photos: Photo[]; titleFallback: str
   );
 }
 
+function formatGauge(stitches?: number | null, rows?: number | null) {
+  if (stitches == null && rows == null) return null;
+  const s = stitches != null ? `${stitches} st` : '— st';
+  const r = rows != null ? `${rows} rows` : '— rows';
+  return `${s} / ${r}`;
+}
+
 export function ProjectPageClient({
   projectId,
   project,
@@ -189,9 +196,10 @@ export function ProjectPageClient({
                             <Text c='dimmed'>No notes yet.</Text>
                           )}
                         </Stack>
-
-                        <Divider />
-
+                      </Stack>
+                    </Paper>
+                    <Paper withBorder radius='lg' p='lg'>
+                      <Stack gap='lg'>
                         <Stack gap='xs'>
                           <Title order={4}>Yarn plan</Title>
                           {project.yarnPlan?.trim() ? (
@@ -199,6 +207,31 @@ export function ProjectPageClient({
                           ) : (
                             <Text c='dimmed'>No yarn plan yet.</Text>
                           )}
+                        </Stack>
+
+                        <Divider />
+
+                        <Stack gap='xs'>
+                          <Title order={4}>Needles & gauge</Title>
+                          {project.needles?.trim() ? (
+                            <Text>Needles: {project.needles}</Text>
+                          ) : (
+                            <Text c='dimmed'>Needles not set.</Text>
+                          )}
+
+                          {formatGauge(project.currentGaugeStitches, project.currentGaugeRows) ? (
+                            <Text>
+                              Current gauge:{' '}
+                              {formatGauge(project.currentGaugeStitches, project.currentGaugeRows)}
+                            </Text>
+                          ) : null}
+
+                          {formatGauge(project.patternGaugeStitches, project.patternGaugeRows) ? (
+                            <Text>
+                              Pattern gauge:{' '}
+                              {formatGauge(project.patternGaugeStitches, project.patternGaugeRows)}
+                            </Text>
+                          ) : null}
                         </Stack>
                       </Stack>
                     </Paper>

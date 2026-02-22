@@ -8,6 +8,11 @@ type EditProjectBody = Partial<{
   status: ProjectStatus | string;
   descriptionMd: string | null;
   yarnPlan: string | null;
+  needles: string | null;
+  currentGaugeStitches: number | null;
+  currentGaugeRows: number | null;
+  patternGaugeStitches: number | null;
+  patternGaugeRows: number | null;
   startedAt: string | null; // ISO string или null
   finishedAt: string | null; // ISO string или null
 
@@ -84,6 +89,41 @@ export async function editProject(projectId: string, body: unknown) {
       return badRequest('yarnPlan must be string or null');
     }
     data.yarnPlan = b.yarnPlan ?? '';
+  }
+
+  if (b.needles !== undefined) {
+    if (b.needles !== null && typeof b.needles !== 'string') {
+      return badRequest('needles must be string or null');
+    }
+    data.needles = b.needles ?? '';
+  }
+
+  if (b.currentGaugeStitches !== undefined) {
+    if (b.currentGaugeStitches !== null && typeof b.currentGaugeStitches !== 'number') {
+      return badRequest('currentGaugeStitches must be number or null');
+    }
+    data.currentGaugeStitches = b.currentGaugeStitches ?? null;
+  }
+
+  if (b.currentGaugeRows !== undefined) {
+    if (b.currentGaugeRows !== null && typeof b.currentGaugeRows !== 'number') {
+      return badRequest('currentGaugeRows must be number or null');
+    }
+    data.currentGaugeRows = b.currentGaugeRows ?? null;
+  }
+
+  if (b.patternGaugeStitches !== undefined) {
+    if (b.patternGaugeStitches !== null && typeof b.patternGaugeStitches !== 'number') {
+      return badRequest('patternGaugeStitches must be number or null');
+    }
+    data.patternGaugeStitches = b.patternGaugeStitches ?? null;
+  }
+
+  if (b.patternGaugeRows !== undefined) {
+    if (b.patternGaugeRows !== null && typeof b.patternGaugeRows !== 'number') {
+      return badRequest('patternGaugeRows must be number or null');
+    }
+    data.patternGaugeRows = b.patternGaugeRows ?? null;
   }
 
   if (b.startedAt !== undefined) {

@@ -13,6 +13,9 @@ const normalizePhoto = (photo?: Photo | null, role?: ImageValue['role']): ImageV
   role: (photo?.role ?? role ?? undefined) as ImageValue['role'],
 });
 
+const toIntOrNull = (value: unknown) =>
+  typeof value === 'number' && Number.isFinite(value) ? Math.trunc(value) : null;
+
 export const projectForm = (project: Partial<ProjectDetail>) => {
   return useForm({
     mode: 'controlled',
@@ -25,9 +28,22 @@ export const projectForm = (project: Partial<ProjectDetail>) => {
       tags: (project.tags ?? []).map((t: Tag) => t.name),
       descriptionMd: project.descriptionMd ?? '',
       yarnPlan: project.yarnPlan ?? '',
+      needles: project.needles ?? '',
+      currentGaugeStitches: project.currentGaugeStitches ?? null,
+      currentGaugeRows: project.currentGaugeRows ?? null,
+      patternGaugeStitches: project.patternGaugeStitches ?? null,
+      patternGaugeRows: project.patternGaugeRows ?? null,
       cover: project.cover ? normalizePhoto(project.cover, 'COVER') : normalizePhoto(null, 'COVER'),
       photos: (project.photos ?? []).map((photo) => normalizePhoto(photo)),
     },
+    transformValues: (values) => ({
+      ...values,
+      needles: values.needles.trim(),
+      currentGaugeStitches: toIntOrNull(values.currentGaugeStitches),
+      currentGaugeRows: toIntOrNull(values.currentGaugeRows),
+      patternGaugeStitches: toIntOrNull(values.patternGaugeStitches),
+      patternGaugeRows: toIntOrNull(values.patternGaugeRows),
+    }),
     validate: {
       title: (v: ProjectFormValues['title']) => (v.trim() ? null : 'Title is required'),
     },

@@ -14,6 +14,11 @@ export type ProjectFormValues = {
   tags: string[];
   descriptionMd: string;
   yarnPlan: string;
+  needles: string;
+  currentGaugeStitches: number | null;
+  currentGaugeRows: number | null;
+  patternGaugeStitches: number | null;
+  patternGaugeRows: number | null;
   cover: ImageValue;
   photos: ImageValue[];
 };

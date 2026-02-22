@@ -48,6 +48,11 @@ export type ProjectDetail = {
   status: string;
   descriptionMd: string;
   yarnPlan: string;
+  needles?: string | null;
+  currentGaugeStitches?: number | null;
+  currentGaugeRows?: number | null;
+  patternGaugeStitches?: number | null;
+  patternGaugeRows?: number | null;
   createdAt: string;
   updatedAt: string;
   startedAt: string | null;

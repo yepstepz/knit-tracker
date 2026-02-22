@@ -80,6 +80,14 @@ export const POST = withAuth(async (req: Request) => {
       status: body?.status ?? ProjectStatus.IDEA,
       descriptionMd: typeof body?.descriptionMd === 'string' ? body.descriptionMd : '',
       yarnPlan: typeof body?.yarnPlan === 'string' ? body.yarnPlan : '',
+      needles: typeof body?.needles === 'string' ? body.needles : null,
+      currentGaugeStitches:
+        typeof body?.currentGaugeStitches === 'number' ? body.currentGaugeStitches : null,
+      currentGaugeRows: typeof body?.currentGaugeRows === 'number' ? body.currentGaugeRows : null,
+      patternGaugeStitches:
+        typeof body?.patternGaugeStitches === 'number' ? body.patternGaugeStitches : null,
+      patternGaugeRows:
+        typeof body?.patternGaugeRows === 'number' ? body.patternGaugeRows : null,
     },
   });
 

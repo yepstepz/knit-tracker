@@ -16,6 +16,7 @@ import {
   Title,
   Grid,
   MultiSelect,
+  NumberInput,
   Textarea,
 } from '@mantine/core';
 import { DateTimePicker } from '@mantine/dates';
@@ -128,6 +129,63 @@ export function ProjectFormClient(props: ProjectFormClientProps) {
                       placeholder='Drops 150/100'
                       {...form.getInputProps('yarnPlan')}
                     />
+                  </Paper>
+                  <Paper withBorder radius='lg' p='lg'>
+                    <Stack gap='md'>
+                      <TextInput
+                        label='Needles'
+                        placeholder='3.5 mm, 5.0 mm'
+                        {...form.getInputProps('needles')}
+                      />
+                      <Grid gutter='sm'>
+                        <Grid.Col span={{ base: 12, sm: 6 }}>
+                          <Stack gap='xs'>
+                            <Text size='sm' fw={600}>
+                              Current gauge
+                            </Text>
+                            <Group gap='xs'>
+                              <NumberInput
+                                label='Stitches'
+                                min={0}
+                                clampBehavior='strict'
+                                allowNegative={false}
+                                {...form.getInputProps('currentGaugeStitches')}
+                              />
+                              <NumberInput
+                                label='Rows'
+                                min={0}
+                                clampBehavior='strict'
+                                allowNegative={false}
+                                {...form.getInputProps('currentGaugeRows')}
+                              />
+                            </Group>
+                          </Stack>
+                        </Grid.Col>
+                        <Grid.Col span={{ base: 12, sm: 6 }}>
+                          <Stack gap='xs'>
+                            <Text size='sm' fw={600}>
+                              Pattern gauge
+                            </Text>
+                            <Group gap='xs'>
+                              <NumberInput
+                                label='Stitches'
+                                min={0}
+                                clampBehavior='strict'
+                                allowNegative={false}
+                                {...form.getInputProps('patternGaugeStitches')}
+                              />
+                              <NumberInput
+                                label='Rows'
+                                min={0}
+                                clampBehavior='strict'
+                                allowNegative={false}
+                                {...form.getInputProps('patternGaugeRows')}
+                              />
+                            </Group>
+                          </Stack>
+                        </Grid.Col>
+                      </Grid>
+                    </Stack>
                   </Paper>
                   <Paper withBorder radius='lg' p='lg'>
                     <Stack>
